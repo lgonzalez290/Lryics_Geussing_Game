@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyrics Guesser 🎤</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="start-screen">
+            <h1>Lyrics Guesser 🎤</h1>
+            <div class="search-wrapper">
+                <input type="text" id="search-artist-input" placeholder="🔍 Search or filter artist..." oninput="onSearchChange()">
+            </div>
+            <div class="artist-picker-container">
+                <div class="selected-artist-preview">
+                    <img id="artist-view-avatar" class="artist-img-frame" src="" alt="Artist Profile Avatar">
+                    <select id="artist-dropdown" onchange="onDropdownSelect()">
+                    </select>
+                </div>
+            </div>
+            <button id="start-button" class="primary-btn">START GUESSING</button>
+            <br>
+            <button id="view-leaderboard-btn" class="secondary-btn">View Leaderboard</button>
+        </div>
+        <div id="game-screen" class="hidden">
+            <div id="game-header">
+                <button id="end-game-btn" class="secondary-btn">End Game & Save Score</button>
+                <div id="points-display">Points: <span id="current-points">0</span></div>
+            </div>
+            <div id="lyric-display">"Loading lyrics..."</div>
+            <div id="guess-area">
+                <div id="guess-area-title">Step 1: Guess the Album</div>
+                <div id="selection-container">
+                    <div id="album-select-grid"></div>
+                    <div id="song-select-list" class="hidden">
+                        <h3>Songs on: <span id="selected-album-name" style="color: white;">Album Name</span></h3>
+                        <p style="color: #aaa; margin-bottom: 15px;">Step 2: Now pick the song!</p>
+                        <div id="song-options-container"></div>
+                        <button id="cancel-song-select" class="secondary-btn" style="margin-left:0; margin-top:15px;">← Choose a different album</button>
+                    </div>
+                </div>
+                <div id="feedback" class="hidden"></div>
+            </div>
+        </div>
+        <div id="leaderboard-screen" class="hidden">
+            <h1>Hall of Fame 🏆</h1>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player Name</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+            <div id="empty-leaderboard" class="hidden" style="color: #888; margin-top: 20px; font-style: italic;">No scores yet. Go play!</div>
+            <br>
+            <button id="back-to-start-btn" class="primary-btn">Back to Menu</button>
+            <button id="clear-leaderboard-btn" class="secondary-btn" style="background-color: #8b0000;">Reset Leaderboard</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
