@@ -2,7 +2,7 @@ const proxy = "https://images.weserv.nl/?url=https://";
 
 let gameData = {
     artists: [
-        { id: "kanye", name: "Kanye West", pic: "kanyebully2024.jpg" },
+        { id: "kanye", name: "Kanye West", pic: "artists/kanyebully2024.jpg" },
         { id: "drake", name: "Drake", pic: "upload.wikimedia.org/wikipedia/commons/2/28/Drake_at_The_Come_Up_Show_2011_%28cropped%29.jpg" },
         { id: "kendrick", name: "Kendrick Lamar", pic: "upload.wikimedia.org/wikipedia/commons/3/32/Kendrick_Lamar_2018.jpg" },
         { id: "travis", name: "Travis Scott", pic: "upload.wikimedia.org/wikipedia/commons/1/14/Travis_Scott_-_Openair_Frausenfeld_2019_08_%28cropped%29.jpg" },
@@ -15,18 +15,18 @@ let gameData = {
         { id: "lr", artist: "kanye", name: "Late Registration" },
         { id: "grad", artist: "kanye", name: "Graduation" },
         { id: "808", artist: "kanye", name: "808s & Heartbreak" },
-        { id: "mbdtf", artist: "kanye", name: "My Beautiful Dark Twisted Fantasy", cover: "images/mbdtf.jpg" },
+        { id: "mbdtf", artist: "kanye", name: "My Beautiful Dark Twisted Fantasy", cover: "images/kanye_images/mbdtf.jpg" },
         { id: "wtt", artist: "kanye", name: "Watch The Throne" },
-        { id: "yeezus", artist: "kanye", name: "Yeezus", cover: "images/Yeezus_album_cover.png" },
+        { id: "yeezus", artist: "kanye", name: "Yeezus", cover: "images/kanye_images/Yeezus_album_cover.png" },
         { id: "tlop", artist: "kanye", name: "The Life of Pablo" },
         { id: "ye", artist: "kanye", name: "Ye" },
         { id: "ksg", artist: "kanye", name: "Kids See Ghosts" },
         { id: "jik", artist: "kanye", name: "Jesus Is King" },
         { id: "donda", artist: "kanye", name: "Donda" },
-        { id: "v1", artist: "kanye", name: "Vultures 1", cover: "images/v1cover.jpeg" },
-        { id: "v2", artist: "kanye", name: "Vultures 2", cover: "images/v2cover.png" },
-        { id: "donda2", artist: "kanye", name: "Donda 2", cover: "images/donda2.jpg" },
-        { id: "bully", artist: "kanye", name: "Bully", cover: "images/bully.jpg" },
+        { id: "v1", artist: "kanye", name: "Vultures 1", cover: "images/kanye_images/v1cover.jpeg" },
+        { id: "v2", artist: "kanye", name: "Vultures 2", cover: "images/kanye_images/v2cover.png" },
+        { id: "donda2", artist: "kanye", name: "Donda 2", cover: "images/kanye_images/donda2.jpg" },
+        { id: "bully", artist: "kanye", name: "Bully", cover: "images/kanye_images/bully.jpg" },
         { id: "tml", artist: "drake", name: "Thank Me Later" },
         { id: "tc", artist: "drake", name: "Take Care" },
         { id: "nwts", artist: "drake", name: "Nothing Was the Same" },
@@ -38,6 +38,7 @@ let gameData = {
         { id: "hnm", artist: "drake", name: "Honestly, Nevermind" },
         { id: "hl", artist: "drake", name: "Her Loss" },
         { id: "fatd", artist: "drake", name: "For All the Dogs" },
+        { id: "wattba", artist: "drake", name: "What a Time to Be Alive" },
         { id: "sec80", artist: "kendrick", name: "Section.80" },
         { id: "gkmc", artist: "kendrick", name: "Good Kid, M.A.A.D City" },
         { id: "tpab", artist: "kendrick", name: "To Pimp a Butterfly" },
@@ -70,33 +71,150 @@ let gameData = {
     songs: []
 };
 
+const albumCoverMap = {
+    cd: "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/15/05/09/15050911-a2f1-9ebc-0d16-6e8faad1cf80/00602567924326.rgb.jpg/500x500bb.jpg",
+    lr: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/0e/90/3c/0e903c43-9d81-f91b-90f1-727a58f7fb2c/00602498824030.rgb.jpg/500x500bb.jpg",
+    grad: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/39/25/2d/39252d65-2d50-b991-0962-f7a98a761271/00602517483507.rgb.jpg/500x500bb.jpg",
+    808: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/f3/61/19/f36119b9-4d88-05eb-4306-2ae0e7decf88/08UMGIM26559.rgb.jpg/500x500bb.jpg",
+    wtt: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/18/f5/07/18f5070d-b5dc-796c-bce4-42badb41a762/00602527812526.rgb.jpg/500x500bb.jpg",
+    tlop: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ec/fd/e0/ecfde04e-6db2-e55e-41fe-83c87a52b16e/00602547908339.rgb.jpg/500x500bb.jpg",
+    ye: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/f8/92/62/f892628e-bfd5-2437-c1f5-0ebbd366de09/00602577303098.rgb.jpg/500x500bb.jpg",
+    ksg: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/3f/2e/d3/3f2ed3b1-d260-4e92-816b-4beac102c676/00602567794318.rgb.jpg/500x500bb.jpg",
+    jik: "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/21/fd/d3/21fdd3d4-0c00-53ef-3903-d0569c49a812/19UMGIM89397.rgb.jpg/500x500bb.jpg",
+    donda: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/cf/a7/f9/cfa7f9be-2d62-89a4-19bf-26276ab39f16/21UMGIM64738.rgb.jpg/500x500bb.jpg",
+    tml: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/65/d3/f6/65d3f6e2-25d5-5890-afe5-526e7cb993ff/00602527458038.rgb.jpg/500x500bb.jpg",
+    tc: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/d2/53/62/d2536245-b94c-b3fd-7168-9512f655f6d4/00602527899091.rgb.jpg/500x500bb.jpg",
+    nwts: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/60/e8/d1/60e8d144-2b8e-cbdc-9ff8-beaf9f4868b1/00602537542345.rgb.jpg/500x500bb.jpg",
+    iyrtitl: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f7/7d/bb/f77dbbb4-e8a2-855d-cc5c-79804a297599/00602547261908.rgb.jpg/500x500bb.jpg",
+    views: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/95/f5/87/95f587f7-21c3-d5f9-d81a-4350f9caa020/16UMGIM27643.rgb.jpg/500x500bb.jpg",
+    ml: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/18/9d/b8/189db80b-bfa8-89d1-1514-5fcb7e5cf8f4/00602557611526.rgb.jpg/500x500bb.jpg",
+    scorp: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bb/6d/8f/bb6d8f67-6d04-10b5-dd62-eb5809ac54fc/00602567879152.rgb.jpg/500x500bb.jpg",
+    clb: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cb/6b/5f/cb6b5fc3-8d35-908a-18e6-6f8eda46ce11/21UM1IM07521.rgb.jpg/500x500bb.jpg",
+    hnm: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/6d/31/ab/6d31abaf-7a07-05f1-13ad-72ec520b6bfb/22UMGIM67374.rgb.jpg/500x500bb.jpg",
+    hl: "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/e1/6e/6a/e16e6a89-3e6d-1936-1a9c-b51680bcd4c1/22UM1IM29132.rgb.jpg/500x500bb.jpg",
+    fatd: "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/fa/9e/e6/fa9ee672-0880-2b5b-a69d-981e8fcb807e/23UM1IM09863.rgb.jpg/500x500bb.jpg",
+    wattba: "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/d3/74/1d/d3741d09-5c9a-461b-aba3-fa345d306d5a/00602547616678.rgb.jpg/500x500bb.jpg",
+    sec80: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/f3/61/19/f36119b9-4d88-05eb-4306-2ae0e7decf88/08UMGIM26559.rgb.jpg/500x500bb.jpg",
+    gkmc: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/36/86/ec/3686ec99-dec4-0a01-8b74-2d8a9a0263a7/12UMGIM52988.rgb.jpg/500x500bb.jpg",
+    tpab: "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/b5/a6/91/b5a69171-5232-3d5b-9c15-8963802f83dd/15UMGIM15814.rgb.jpg/500x500bb.jpg",
+    damn: "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/ab/16/ef/ab16efe9-e7f1-66ec-021c-5592a23f0f9e/17UMGIM88793.rgb.jpg/500x500bb.jpg",
+    mrsm: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/6b/17/e6/6b17e679-70e0-e00e-93e1-5af4d25ee8c8/22UMGIM52376.rgb.jpg/500x500bb.jpg",
+    rodeo: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/6d/fb/f1/6dfbf17d-4032-f585-35ad-f3f9b6859cd9/886445460421.jpg/500x500bb.jpg",
+    birds: "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/b8/e5/27/b8e527c8-aaf4-c7b7-5562-c479458ed7d9/886446092645.jpg/500x500bb.jpg",
+    astro: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e7/49/8f/e7498f65-df8f-bead-d6e3-2a8d4d642a79/886447235317.jpg/500x500bb.jpg",
+    utopia: "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/7d/4f/94/7d4f9468-56e1-3a2d-7186-c8088170ef58/196871341899.jpg/500x500bb.jpg",
+    sslp: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/ea/ac/03/eaac03e5-8e9d-847e-d5b9-af7dee6a970b/00606949063221.rgb.jpg/500x500bb.jpg",
+    mmlp: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/ea/ac/03/eaac03e5-8e9d-847e-d5b9-af7dee6a970b/00606949063221.rgb.jpg/500x500bb.jpg",
+    tes: "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/dd/5c/e6/dd5ce621-f7d2-f767-7a08-e7a7eaa7870b/00602537526994.rgb.jpg/500x500bb.jpg",
+    encore: "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/f6/1c/ab/f61cabb0-9159-2a15-db37-09d8e77e971c/00602567834403.rgb.jpg/500x500bb.jpg",
+    relapse: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/27/96/e3/2796e35a-484d-f1de-5098-dbde88d5fb56/00602527032139.rgb.jpg/500x500bb.jpg",
+    recovery: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/95/a4/2c/95a42c0d-f3c8-c70d-3e3a-93cfa4a516d4/00602527394558.rgb.jpg/500x500bb.jpg",
+    mmlp2: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/f4/ae/5c/f4ae5c21-bfe1-e99e-4732-a2b6cf006848/00602537542727.rgb.jpg/500x500bb.jpg",
+    revival: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/78/07/35/78073533-a113-170d-bfab-acc3cec405d1/00602567238218.rgb.jpg/500x500bb.jpg",
+    kamikaze: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/03/c2/54/03c2540d-b9f3-9807-b429-da23cbb854a2/00602577046421.rgb.jpg/500x500bb.jpg",
+    mtbmb: "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/c6/3f/7a/c63f7a28-4e53-1ae2-cfae-5d211e0c256c/20UMGIM02955.rgb.jpg/500x500bb.jpg",
+    tdoss: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d5/ae/23/d5ae23ed-c989-c297-c860-e07f51723001/24UMGIM99176.rgb.jpg/500x500bb.jpg",
+    gbm1: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a0/ca/05/a0ca057c-686e-8f24-e4da-43b39e5033f4/23UMGIM13549.rgb.jpg/500x500bb.jpg",
+    gbm2: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a0/ca/05/a0ca057c-686e-8f24-e4da-43b39e5033f4/23UMGIM13549.rgb.jpg/500x500bb.jpg",
+    iop: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/ca/58/e5/ca58e5e3-acb7-8ca3-6af9-ad63af3b71f1/075679873675.jpg/500x500bb.jpg",
+    pf: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/3f/6a/dc/3f6adcfb-4d27-303e-b964-3710c56800e3/11UMGIM13385.rgb.jpg/500x500bb.jpg",
+    rr: "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/a5/c4/90/a5c490a1-d914-9943-7e02-32f8320e5840/12UMGIM12516.rgb.jpg/500x500bb.jpg",
+    pp: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/6c/62/dc/6c62dcf4-b35c-f12e-28e6-d08b878bbeb5/14UMGIM59292.rgb.jpg/500x500bb.jpg",
+    queen: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/8c/50/56/8c505623-89b6-1799-65dc-d03242cfe441/18UMGIM36519.rgb.jpg/500x500bb.jpg",
+    pf2: "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/83/f0/83/83f08337-954b-e616-b8d9-317d9def8190/23UM1IM08927.rgb.jpg/500x500bb.jpg"
+};
+
+Object.keys(albumCoverMap).forEach(id => {
+    const album = gameData.albums.find(a => a.id === id);
+    if (album && !album.cover) {
+        album.cover = albumCoverMap[id];
+    }
+});
+
 // Load songs from CSV JSON file
 async function loadSongsFromJSON() {
     try {
-        const response = await fetch('csvjson.json');
-        const csvData = await response.json();
-        
-        // Transform CSV data to match our songs structure
-        gameData.songs = csvData.map(entry => {
-            // Find the album ID by matching artist name and album name
-            const album = gameData.albums.find(a => 
-                a.name.toLowerCase() === entry.album.toLowerCase() &&
-                gameData.artists.find(ar => ar.id === a.artist && 
-                    ar.name.toLowerCase().includes(entry.artist.toLowerCase().split(' ')[0]) || 
-                    entry.artist.toLowerCase().includes(ar.name.toLowerCase().split(' ')[0])
-                )
-            );
-            
-            return {
-                albumId: album ? album.id : null,
-                name: entry.song,
-                lyrics: entry.lyric
-            };
-        }).filter(song => song.albumId !== null); // Remove any songs without matching albums
-        
-        console.log(`Loaded ${gameData.songs.length} songs from csvjson.json`);
+        // Try known JSON filenames in order of preference
+        const candidates = ['kanye_lyrics.json', 'csvjson.json'];
+        let csvData = null;
+        let loadedFrom = null;
+        for (const fname of candidates) {
+            try {
+                const resp = await fetch(fname);
+                if (!resp.ok) continue;
+                const data = await resp.json();
+                if (data && Array.isArray(data) && data.length > 0) {
+                    csvData = data;
+                    loadedFrom = fname;
+                    break;
+                }
+            } catch (e) {
+                // try next candidate
+                continue;
+            }
+        }
+        if (!csvData) throw new Error('No song JSON file found (tried: ' + candidates.join(', ') + ')');
+        console.log(`Loading songs from ${loadedFrom}`);
+        processCsvData(csvData);
     } catch (error) {
         console.error("Error loading songs from CSV JSON:", error);
+    }
+}
+
+function normalizeAlbumName(name) {
+    if (!name) return "";
+    return name
+        .toLowerCase()
+        .replace(/['’]/g, "")
+        .replace(/[.,!?:;]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+// Shared helper to convert raw CSV/JSON entries into gameData.songs
+function processCsvData(csvData) {
+    if (!csvData || !Array.isArray(csvData)) return;
+    gameData.songs = csvData.map(entry => {
+        const normalizedAlbumName = normalizeAlbumName(entry.album || '');
+        const normalizedArtistName = normalizeAlbumName(entry.artist || '');
+
+        const album = gameData.albums.find(a => {
+            const normalizedAName = normalizeAlbumName(a.name);
+            const artistMatch = gameData.artists.find(ar => ar.id === a.artist && (
+                normalizeAlbumName(ar.name).includes(normalizedArtistName.split(' ')[0]) ||
+                normalizedArtistName.includes(normalizeAlbumName(ar.name).split(' ')[0])
+            ));
+            return normalizedAName === normalizedAlbumName && artistMatch;
+        });
+
+        return {
+            albumId: album ? album.id : null,
+            name: entry.song,
+            lyrics: entry.lyric
+        };
+    }).filter(song => song.albumId !== null);
+
+    console.log(`Loaded ${gameData.songs.length} songs`);
+}
+
+// Try to load an artist-specific JSON file (e.g., drake_lyrics.json)
+async function loadSongsForArtist(artistId) {
+    if (!artistId) return;
+    const fname = `${artistId}_lyrics.json`;
+    try {
+        const resp = await fetch(fname);
+        if (!resp.ok) {
+            console.log(`${fname} not found for artist ${artistId}`);
+            return;
+        }
+        const data = await resp.json();
+        if (data && Array.isArray(data) && data.length > 0) {
+            processCsvData(data);
+            currentSongsSourceArtist = artistId;
+            console.log(`Loaded artist-specific songs from ${fname}`);
+        }
+    } catch (e) {
+        console.log(`Failed to load ${fname}:`, e);
     }
 }
 
@@ -104,6 +222,7 @@ let points = 0;
 let selectedArtistId = "kanye";
 let currentRound = { albumId: "", songName: "", lyrics: "" };
 let currentGuessAlbumId = "";
+let currentSongsSourceArtist = null;
 
 const startScreen = document.getElementById("start-screen");
 const gameScreen = document.getElementById("game-screen");
@@ -134,6 +253,8 @@ document.getElementById("cancel-song-select").onclick = resetGuessArea;
 window.onload = async () => {
     await loadSongsFromJSON();
     populateDropdown(gameData.artists);
+    // Load artist-specific file for the initially selected artist, if available.
+    await loadSongsForArtist(artistDropdown.value);
 };
 
 function populateDropdown(list) {
@@ -158,6 +279,8 @@ function onSearchChange() {
 
 function onDropdownSelect() {
     updateAvatarImage(artistDropdown.value);
+    // Attempt to load an artist-specific lyrics JSON (e.g., drake_lyrics.json)
+    loadSongsForArtist(artistDropdown.value);
 }
 
 function updateAvatarImage(artistId) {
@@ -174,8 +297,11 @@ function updateAvatarImage(artistId) {
     }
 }
 
-function startGame() {
+async function startGame() {
     if(!selectedArtistId) return;
+    if (currentSongsSourceArtist !== selectedArtistId) {
+        await loadSongsForArtist(selectedArtistId);
+    }
     startScreen.classList.add("hidden");
     gameScreen.classList.remove("hidden");
     points = 0;
@@ -232,24 +358,26 @@ function renderAlbumGrid(artistAlbums) {
         `;
         albumGrid.appendChild(card);
 
-        // Always try to fetch from iTunes to ensure all covers load
-        const artistObj = gameData.artists.find(a => a.id === album.artist);
-        const artistName = artistObj ? artistObj.name : "";
-        const apiQueryTerm = encodeURIComponent(`${artistName} ${album.name}`);
+        // Only try to fetch from iTunes when a local cover isn't provided
+        if (!album.cover) {
+            const artistObj = gameData.artists.find(a => a.id === album.artist);
+            const artistName = artistObj ? artistObj.name : "";
+            const apiQueryTerm = encodeURIComponent(`${artistName} ${album.name}`);
 
-        fetch(`https://itunes.apple.com/search?term=${apiQueryTerm}&entity=album&limit=1`)
-            .then(response => response.json())
-            .then(data => {
-                const targetImageElement = document.getElementById(`cover-img-${album.id}`);
-                if (targetImageElement && data.results && data.results.length > 0) {
-                    let structuralArtworkUrl = data.results[0].artworkUrl100;
-                    let highResArtworkUrl = structuralArtworkUrl.replace("100x100bb", "500x500bb");
-                    targetImageElement.src = highResArtworkUrl;
-                }
-            })
-            .catch(err => {
-                console.error("iTunes cover fetching failed for album: " + album.name, err);
-            });
+            fetch(`https://itunes.apple.com/search?term=${apiQueryTerm}&entity=album&limit=1`)
+                .then(response => response.json())
+                .then(data => {
+                    const targetImageElement = document.getElementById(`cover-img-${album.id}`);
+                    if (targetImageElement && data.results && data.results.length > 0) {
+                        let structuralArtworkUrl = data.results[0].artworkUrl100;
+                        let highResArtworkUrl = structuralArtworkUrl.replace("100x100bb", "500x500bb");
+                        targetImageElement.src = highResArtworkUrl;
+                    }
+                })
+                .catch(err => {
+                    console.error("iTunes cover fetching failed for album: " + album.name, err);
+                });
+        }
     });
 }
 
@@ -298,6 +426,10 @@ function selectAlbum(albumId, albumName) {
 
     // 3. Fallback filler step 1: If less than 5 songs, pull extra unique songs from the SAME artist
     if (finalOptions.length < 5) {
+        // For Drake, do not pull fillers — only show songs from the clicked album
+        if (selectedArtistId === 'drake') {
+            // leave finalOptions as-is (may be fewer than 5)
+        } else {
         const albumObj = gameData.albums.find(a => a.id === albumId);
         const artistId = albumObj ? albumObj.artist : selectedArtistId;
         const artistAlbumIds = gameData.albums.filter(a => a.artist === artistId).map(a => a.id);
@@ -312,10 +444,14 @@ function selectAlbum(albumId, albumName) {
             if (finalOptions.length >= 5) break;
             finalOptions.push(song);
         }
+        }
     }
 
     // 4. Fallback filler step 2: If STILL less than 5 songs (e.g. Cardi B), pull random songs globally
     if (finalOptions.length < 5) {
+        if (selectedArtistId === 'drake') {
+            // keep fewer than 5 options for Drake rather than pulling global fillers
+        } else {
         let allOtherSongs = gameData.songs.filter(s => 
             !finalOptions.some(f => f.name === s.name)
         );
@@ -323,6 +459,7 @@ function selectAlbum(albumId, albumName) {
         for (let song of allOtherSongs) {
             if (finalOptions.length >= 5) break;
             finalOptions.push(song);
+        }
         }
     }
 
