@@ -1,6 +1,6 @@
 const proxy = "https://images.weserv.nl/?url=https://";
 
-const gameData = {
+let gameData = {
     artists: [
         { id: "kanye", name: "Kanye West", pic: "upload.wikimedia.org/wikipedia/commons/5/5c/Kanye_West_at_the_2009_Tribeca_Film_Festival_%28crop%29.jpg" },
         { id: "drake", name: "Drake", pic: "upload.wikimedia.org/wikipedia/commons/2/28/Drake_at_The_Come_Up_Show_2011_%28cropped%29.jpg" },
@@ -23,8 +23,10 @@ const gameData = {
         { id: "ksg", artist: "kanye", name: "Kids See Ghosts" },
         { id: "jik", artist: "kanye", name: "Jesus Is King" },
         { id: "donda", artist: "kanye", name: "Donda" },
-        { id: "v1", artist: "kanye", name: "Vultures 1", cover: "images/vultures1.jpg" },
-        { id: "v2", artist: "kanye", name: "Vultures 2", cover: "images/vultures2.jpg" },
+        { id: "v1", artist: "kanye", name: "Vultures 1", cover: "images/v1cover.jpeg" },
+        { id: "v2", artist: "kanye", name: "Vultures 2", cover: "images/v2cover.png" },
+        { id: "donda2", artist: "kanye", name: "Donda 2", cover: "images/donda2.jpg" },
+        { id: "bully", artist: "kanye", name: "Bully", cover: "images/bully.jpg" },
         { id: "tml", artist: "drake", name: "Thank Me Later" },
         { id: "tc", artist: "drake", name: "Take Care" },
         { id: "nwts", artist: "drake", name: "Nothing Was the Same" },
@@ -65,70 +67,38 @@ const gameData = {
         { id: "queen", artist: "nicki", name: "Queen" },
         { id: "pf2", artist: "nicki", name: "Pink Friday 2" }
     ],
-    songs: [
-        { albumId: "cd", name: "Jesus Walks", lyrics: "You know what the Midwest is? / Young and restless" },
-        { albumId: "lr", name: "Gold Digger", lyrics: "She take my money when I'm in need / Yeah, she's a triflin' friend indeed" },
-        { albumId: "grad", name: "Stronger", lyrics: "N-n-now th-th-that don't kill me / Can only make me stronger" },
-        { albumId: "808", name: "Heartless", lyrics: "In the night, I hear 'em talk / The coldest story ever told" },
-        { albumId: "mbdtf", name: "Dark Fantasy", lyrics: "You might think you've peeped the scene / You haven't, the Xanadu has merely been" },
-        { albumId: "mbdtf", name: "Power", lyrics: "I living in the 21st century / Doing something mean to it" },
-        { albumId: "mbdtf", name: "Monster", lyrics: "I do it for the culture, to let 'em know what a nigga look like / A nigga can look like a monster" },
-        { albumId: "mbdtf", name: "All of the Lights", lyrics: "Turn up the lights in here, baby / Extra bright, I want y'all to see this" },
-        { albumId: "mbdtf", name: "Runaway", lyrics: "And I always find, yeah, I always find something wrong / You been putting up with my shit just way too long" },
-        { albumId: "wtt", name: "Otis", lyrics: "Luxury rap, the Hermes of verses / Sophisticated ignorance, write my curses in cursive" },
-        { albumId: "yeezus", name: "On Sight", lyrics: "Yeezus season-approaching / Fuck whatever y'all been hearing" },
-        { albumId: "yeezus", name: "Black Skinhead", lyrics: "For my theme song (Black) / My leather black jeans on (Black)" },
-        { albumId: "yeezus", name: "New Slaves", lyrics: "My mama was raised in the era when / Clean water was only served to the fairer skin" },
-        { albumId: "yeezus", name: "Blood on the Leaves", lyrics: "Strange fruit hanging from the poplar trees / Blood on the leaves" },
-        { albumId: "yeezus", name: "Bound 2", lyrics: "Bound to fall in love / Bound to fall in love (Uh-huh, honey)" },
-        { albumId: "tlop", name: "Famous", lyrics: "I feel like me and Taylor might still have sex / Why? I made that bitch famous" },
-        { albumId: "ye", name: "Yikes", lyrics: "Shit could get menacin', frightenin', find help" },
-        { albumId: "ksg", name: "Freeee", lyrics: "I don't feel pain anymore / Guess what, baby? I feel free" },
-        { albumId: "jik", name: "Closed on Sunday", lyrics: "Closed on Sunday, you're my Chick-fil-A" },
-        { albumId: "donda", name: "Off The Grid", lyrics: "We off the grid, grid, grid / This for my kid, kid, kid" },
-        { albumId: "v1", name: "Carnival", lyrics: "Now I'm Ye-Kelly, bitch, now I'm Bill Cosby, bitch" },
-        { albumId: "v2", name: "530", lyrics: "Fifty-thirty, the car missing / No text, no calls, no texts missing" },
-        { albumId: "tml", name: "Over", lyrics: "I know they say the first love is the sweetest / But that first cut is the deepest" },
-        { albumId: "tc", name: "Marvins Room", lyrics: "I'm just saying you could do better / Tell me have you heard that lately" },
-        { albumId: "nwts", name: "Started From the Bottom", lyrics: "Started from the bottom now we're here / Started from the bottom now my whole team here" },
-        { albumId: "iyrtitl", name: "Energy", lyrics: "I got enemies, got a lot of enemies / Got a lot of people tryin' to drain me of this energy" },
-        { albumId: "views", name: "Hotline Bling", lyrics: "You used to call me on my cell phone / Late night when you need my love" },
-        { albumId: "ml", name: "Fake Love", lyrics: "I've been feelin' so alone / I've got fake people showin' fake love to me" },
-        { albumId: "scorp", name: "God's Plan", lyrics: "I hold back, sometimes I won't, yuh / I feel good, sometimes I don't" },
-        { albumId: "clb", name: "Way 2 Sexy", lyrics: "I'm too sexy for this syrup, too sexy for your girl" },
-        { albumId: "hnm", name: "Sticky", lyrics: "Ayy, switch on the camera flash / Put on your sneakers, we runnin' a track" },
-        { albumId: "hl", name: "Rich Flex", lyrics: "Go and do your 21-pack / Do your thing, let them know who you are" },
-        { albumId: "fatd", name: "First Person Shooter", lyrics: "Big as the Super Bowl / But the lines are too long to get in" },
-        { albumId: "sec80", name: "A.D.H.D", lyrics: "No, crack open another rolling rock / Crack open another rolling rock" },
-        { albumId: "gkmc", name: "Swimming Pools", lyrics: "Pour up, head shot, sit down, stand up / Pass out, wake up, faded" },
-        { albumId: "tpab", name: "Alright", lyrics: "Alls my life I has to fight, nigga / Alls my life I... Hard times like God" },
-        { albumId: "damn", name: "HUMBLE.", lyrics: "Nobody pray for me / It's been that day for me" },
-        { albumId: "mrsm", name: "N95", lyrics: "Hello new world, all the boys and girls / I got some true stories to tell" },
-        { albumId: "rodeo", name: "Antidote", lyrics: "Don't you open up that window / Don't you let out that antidote" },
-        { albumId: "birds", name: "Goosebumps", lyrics: "I get those goosebumps every time, yeah, you come around" },
-        { albumId: "astro", name: "SICKO MODE", lyrics: "Made this here with all the ice on in the booth" },
-        { albumId: "utopia", name: "FE!N", lyrics: "The career's more at stake when you in your prime / Career's more at stake up in Utopia" },
-        { albumId: "sslp", name: "My Name Is", lyrics: "Hi! My name is... (what?) My name is... (who?) My name is... Slim Shady" },
-        { albumId: "mmlp", name: "The Real Slim Shady", lyrics: "May I have your attention, please? / Will the real Slim Shady please stand up?" },
-        { albumId: "tes", name: "Without Me", lyrics: "Now this looks like a job for me / So everybody, just follow me" },
-        { albumId: "encore", name: "Mockingbird", lyrics: "Hailie, I know you miss your mom, and I know you miss your dad" },
-        { albumId: "relapse", name: "Beautiful", lyrics: "Lately I've been hard to reach / I've been awfully alone" },
-        { albumId: "recovery", name: "Not Afraid", lyrics: "I'm not afraid to take a stand / Everybody, come take my hand" },
-        { albumId: "mmlp2", name: "Rap God", lyrics: "Look, I was gonna go easy on you not to hurt your feelings" },
-        { albumId: "revival", name: "River", lyrics: "I've been a liar, been a thief / Been a lover, been a cheat" },
-        { albumId: "kamikaze", name: "Venom", lyrics: "With the venom and the momentum, I'm thinking of knocking 'em" },
-        { albumId: "mtbmb", name: "Godzilla", lyrics: "I can swallow a bottle of alcohol and I'll feel like Godzilla" },
-        { albumId: "tdoss", name: "Houdini", lyrics: "Abra-abracadabra / I'm 'bout to reach into my bag, bruh" },
-        { albumId: "gbm1", name: "Foreva", lyrics: "If you got a problem with me, say it now / 'Cause I'll beat your ass, foreva" },
-        { albumId: "gbm2", name: "Lick", lyrics: "Lookin' like I caught a lick / Run up on me, you get hit" },
-        { albumId: "iop", name: "Bodak Yellow", lyrics: "Said little bitch, you can't fuck with me / If you wanted to" },
-        { albumId: "pf", name: "Super Bass", lyrics: "This one is for the boys with the booming system" },
-        { albumId: "rr", name: "Starships", lyrics: "Starships were meant to fly / Hands up and touch the sky" },
-        { albumId: "pp", name: "Anaconda", lyrics: "My anaconda don't want none / Unless you got buns, hun" },
-        { albumId: "queen", name: "Chun-Li", lyrics: "Ayy, yo, I been off in the office workin' on my wardrobe" },
-        { albumId: "pf2", name: "FTCU", lyrics: "High-class bitch, but I'm robust / Fuck the club up" }
-    ]
+    songs: []
 };
+
+// Load songs from CSV JSON file
+async function loadSongsFromJSON() {
+    try {
+        const response = await fetch('csvjson.json');
+        const csvData = await response.json();
+        
+        // Transform CSV data to match our songs structure
+        gameData.songs = csvData.map(entry => {
+            // Find the album ID by matching artist name and album name
+            const album = gameData.albums.find(a => 
+                a.name.toLowerCase() === entry.album.toLowerCase() &&
+                gameData.artists.find(ar => ar.id === a.artist && 
+                    ar.name.toLowerCase().includes(entry.artist.toLowerCase().split(' ')[0]) || 
+                    entry.artist.toLowerCase().includes(ar.name.toLowerCase().split(' ')[0])
+                )
+            );
+            
+            return {
+                albumId: album ? album.id : null,
+                name: entry.song,
+                lyrics: entry.lyric
+            };
+        }).filter(song => song.albumId !== null); // Remove any songs without matching albums
+        
+        console.log(`Loaded ${gameData.songs.length} songs from csvjson.json`);
+    } catch (error) {
+        console.error("Error loading songs from CSV JSON:", error);
+    }
+}
 
 let points = 0;
 let selectedArtistId = "kanye";
@@ -161,7 +131,8 @@ document.getElementById("back-to-start-btn").onclick = () => {
 document.getElementById("clear-leaderboard-btn").onclick = clearLeaderboard;
 document.getElementById("cancel-song-select").onclick = resetGuessArea;
 
-window.onload = () => {
+window.onload = async () => {
+    await loadSongsFromJSON();
     populateDropdown(gameData.artists);
 };
 
@@ -258,6 +229,7 @@ function renderAlbumGrid(artistAlbums) {
         `;
         albumGrid.appendChild(card);
 
+        // Only try to fetch from iTunes if the album doesn't have a local cover
         if (!album.cover) {
             const artistObj = gameData.artists.find(a => a.id === album.artist);
             const artistName = artistObj ? artistObj.name : "";

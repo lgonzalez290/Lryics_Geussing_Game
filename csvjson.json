@@ -1,0 +1,482 @@
+[
+  {
+    "artist": "Kanye",
+    "album": "The College Dropout",
+    "song": "Jesus Walks",
+    "lyric": "You know what the Midwest is? Young and restless"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The College Dropout",
+    "song": "Family Business",
+    "lyric": "Act like you ain't took a bath with your cousin"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The College Dropout",
+    "song": "Slow Jams",
+    "lyric": "She got a light-skinned friend, look like Michael Jackson Got a dark-skinned friend, look like Michael Jackson"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The College Dropout",
+    "song": "Through the wire",
+    "lyric": "Not to worry, Mr. H-to-the-izz-O’s back to w-izz-ork"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The College Dropout",
+    "song": "All Falls Down",
+    "lyric": "I just can't keep workin' like this This grave shifts is like a slave ship"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Late Registration",
+    "song": "Gold Digger",
+    "lyric": "She take my money when I'm in need"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Late Registration",
+    "song": "Drive Slow",
+    "lyric": "You need to pump your brakes and drive slow, homie"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Late Registration",
+    "song": "We Major",
+    "lyric": "You motherfuckers better do your job and roll up, and watch how we roll up"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Late Registration",
+    "song": "Hey Mama",
+    "lyric": "I wanna tell the whole world about a friend of mine"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Late Registration",
+    "song": "Diamonds from Sierra Leone",
+    "lyric": "Throw your diamonds in the sky if you feel the vibe"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Graduation",
+    "song": "Stronger",
+    "lyric": "I ask, 'cause I'm not sure Do anybody make real shit anymore?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Graduation",
+    "song": "I Wonder",
+    "lyric": "Do you even remember what the issue is? You just tryna find where the tissue is"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Graduation",
+    "song": "Good Life",
+    "lyric": "And she got that ass, I got to look, sorry"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Graduation",
+    "song": "Flashing Lights",
+    "lyric": "I hate these niggas more than a Nazi"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Graduation",
+    "song": "Homecoming",
+    "lyric": "Baby, do you remember when Fireworks at Lake Michigan?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "808s & Heartbreak",
+    "song": "Heartless",
+    "lyric": "In the night, I hear 'em talk The coldest story ever told"
+  },
+  {
+    "artist": "Kanye",
+    "album": "808s & Heartbreak",
+    "song": "Love Lockdown",
+    "lyric": "I'm in love with you, but the vibe is wrong"
+  },
+  {
+    "artist": "Kanye",
+    "album": "808s & Heartbreak",
+    "song": "Paranoid",
+    "lyric": "You really wanna spend your whole life alone?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "808s & Heartbreak",
+    "song": "Robocop",
+    "lyric": "You spoiled little L.A. girl You're just an L.A. girl"
+  },
+  {
+    "artist": "Kanye",
+    "album": "808s & Heartbreak",
+    "song": "Street Lights",
+    "lyric": "Let me know Do I still got time to grow?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "My Beautiful Dark Twisted Fantasy",
+    "song": "Gorgeous",
+    "lyric": "This week has been a bad massage, I need a happy ending"
+  },
+  {
+    "artist": "Kanye",
+    "album": "My Beautiful Dark Twisted Fantasy",
+    "song": "Power",
+    "lyric": "I embody every characteristic of the egotistic He knows he's so fuckin' gifted"
+  },
+  {
+    "artist": "Kanye",
+    "album": "My Beautiful Dark Twisted Fantasy",
+    "song": "All of the Lights",
+    "lyric": "Her mother, brother, grandmother hate me in that order"
+  },
+  {
+    "artist": "Kanye",
+    "album": "My Beautiful Dark Twisted Fantasy",
+    "song": "Devil in a New Dress",
+    "lyric": "Lookin' at my bitch, I bet she give your ass a bone"
+  },
+  {
+    "artist": "Kanye",
+    "album": "My Beautiful Dark Twisted Fantasy",
+    "song": "Runaway",
+    "lyric": "I'm so gifted at finding what I don't like the most"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Watch the Throne",
+    "song": "No Church in the Wild",
+    "lyric": "What's a god to a non-believer?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Watch the Throne",
+    "song": "N*ggas in Paris",
+    "lyric": "She said, \"Ye, can we get married at the mall?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Watch the Throne",
+    "song": "Otis",
+    "lyric": "I made \"Jesus Walks,\" I'm never going to hell"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Watch the Throne",
+    "song": "Primetime",
+    "lyric": "Our third eon, that's what the fuck we on"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Watch the Throne",
+    "song": "Gotta Have it",
+    "lyric": "Hello, hello, hello, hello, white America, assassinate my character"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Yeezus",
+    "song": "On Sight",
+    "lyric": "No sports bra, let's keep it bouncin'"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Yeezus",
+    "song": "Black Skinhead",
+    "lyric": "Three hundred bitches, where the Trojans?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Yeezus",
+    "song": "New Slaves",
+    "lyric": "Fuck you and your Hampton house, I'll fuck your Hampton spouse"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Yeezus",
+    "song": "Hold my Liquor",
+    "lyric": "Bitch, I'm back out my coma Wakin' up on your sofa"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Yeezus",
+    "song": "Bound 2",
+    "lyric": "I mean damn, what would Jeromey Romey Romey Rome think?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The Life of Pablo",
+    "song": "Ultralight Beam",
+    "lyric": "And end my holy war I'm tryna keep my faith"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The Life of Pablo",
+    "song": "Father Stretch my Hands",
+    "lyric": "Beautiful mornin', you're the sun in my mornin', babe"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The Life of Pablo",
+    "song": "No More Parties in LA",
+    "lyric": "Now you wanna divide the yam like it equate the math?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The Life of Pablo",
+    "song": "30 Hours",
+    "lyric": "I wake up, assessin' the damages, Checkin' MediaTakeOut"
+  },
+  {
+    "artist": "Kanye",
+    "album": "The Life of Pablo",
+    "song": "Waves",
+    "lyric": "I'm the one your bitch like Yeah, I'm the one your bitch like"
+  },
+  {
+    "artist": "Kanye",
+    "album": "ye",
+    "song": "All Mine",
+    "lyric": "I love your titties 'cause they prove I can focus on two things at once"
+  },
+  {
+    "artist": "Kanye",
+    "album": "ye",
+    "song": "Yikes",
+    "lyric": "You know how many girls I took to the titty shop?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "ye",
+    "song": "No Mistakes",
+    "lyric": "I don't take advice from people less successful than me"
+  },
+  {
+    "artist": "Kanye",
+    "album": "ye",
+    "song": "Ghost Town",
+    "lyric": "Some day, the drama'll be gone And they'll play this song on and on"
+  },
+  {
+    "artist": "Kanye",
+    "album": "ye",
+    "song": "Violent Crimes",
+    "lyric": "Cause now I see women as somethin' to nurture Not somethin' to conquer"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Kids See Ghosts",
+    "song": "Reborn",
+    "lyric": "I was off the chain, I was often drained I was off the meds, I was called insane"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Kids See Ghosts",
+    "song": "Feel the Love",
+    "lyric": "Why would I wait when there's other women? Why would I hate? We in love with winnin"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Kids See Ghosts",
+    "song": "4th Demension",
+    "lyric": "Bought a alligator, I ain't talkin' Lacoste"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Kids See Ghosts",
+    "song": "Cudi Montage",
+    "lyric": "Lord shine Your light on me, save me, please"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Kids See Ghosts",
+    "song": "Freeee",
+    "lyric": "I don't feel pain anymore.Guess what, baby?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Jesus is King",
+    "song": "Follow God",
+    "lyric": "People really know you, push your buttons like typewrite"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Jesus is King",
+    "song": "Closed on Sunday",
+    "lyric": "You're my number one, with the lemonade"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Jesus is King",
+    "song": "Use this Gospel",
+    "lyric": "Our demons are tremblin' Holy angels defendin'"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Jesus is King",
+    "song": "On God",
+    "lyric": "Thirteenth amendment, gotta end it, that's on me"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Jesus is King",
+    "song": "Selah",
+    "lyric": "If you woke, then wake up With Judas, kiss and make up"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda",
+    "song": "Come to Life",
+    "lyric": "You the air that I breathe, the ultra-ultralight beam"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda",
+    "song": "Moon",
+    "lyric": "Sittin', I sip out my cup Thinkin' I should be a better me"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda",
+    "song": "Life of the Party",
+    "lyric": "If there's a Heaven, you would think they'd let ya speak to your son"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda",
+    "song": "Off the Grid",
+    "lyric": "They playin' soccer in my backyard, I think I see Messi"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda",
+    "song": "Jail",
+    "lyric": "Don't you curse at me on text, why you try to hit the flex?"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 1",
+    "song": "Talking",
+    "lyric": "It's your bestie, Miss, Miss Westie"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 1",
+    "song": "Back to Me",
+    "lyric": "This the shit that make rap niggas mad Them \"think they cool\" niggas mad"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 1",
+    "song": "Problematic",
+    "lyric": "Your dress code upscale, used to shop at Aldis"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 1",
+    "song": "Carnival",
+    "lyric": "This that Game of Thrones, Yeezy, not the clones"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 1",
+    "song": "Vultures",
+    "lyric": "I don't have no rapper friends, I hang wit' The Vultures"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 2",
+    "song": "Field Trip",
+    "lyric": "This ain't cheddar, this quiche"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 2",
+    "song": "Promotion",
+    "lyric": "I do gravity above the stars, I'm goin' to Mars when I float"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 2",
+    "song": "530",
+    "lyric": "No text backs or call misses, I feel like we all victims"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 2",
+    "song": "Bomb",
+    "lyric": "I like to have fun I like to go to the beach I like the sun"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Vultures 2",
+    "song": "River",
+    "lyric": "Rock the Audemars Piguet, you ain't on no sad shit"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda 2",
+    "song": "True Love",
+    "lyric": "No hard feelings, but these feelings harder"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda 2",
+    "song": "Pablo",
+    "lyric": "I like to think the world is mine"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda 2",
+    "song": "Happy",
+    "lyric": "Hopped out the Uber, next thing you know, I bought Uber"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda 2",
+    "song": "We Did It",
+    "lyric": "Color palettes lookin' Pantone 'bout to turn into a phantom"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Donda 2",
+    "song": "Keep the Flowers",
+    "lyric": "I am a flex, imagine your ex face when he find out"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Bully",
+    "song": "Preacher Man",
+    "lyric": "The only GOAT, the genius one"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Bully",
+    "song": "All the Love",
+    "lyric": "Wounds get healed with time"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Bully",
+    "song": "Bully",
+    "lyric": "When a masterpiece turn into catastrophe"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Bully",
+    "song": "Punch Drunk",
+    "lyric": "I had to learn to read between the lines"
+  },
+  {
+    "artist": "Kanye",
+    "album": "Bully",
+    "song": "Highs and Lows",
+    "lyric": "Ain't nobody bigger than the program 'Til you bigger than the program"
+  }
+]
