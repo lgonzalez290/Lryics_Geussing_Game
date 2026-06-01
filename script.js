@@ -2,7 +2,7 @@ const proxy = "https://images.weserv.nl/?url=https://";
 
 let gameData = {
     artists: [
-        { id: "kanye", name: "Kanye West", pic: "upload.wikimedia.org/wikipedia/commons/5/5c/Kanye_West_at_the_2009_Tribeca_Film_Festival_%28crop%29.jpg" },
+        { id: "kanye", name: "Kanye West", pic: "kanyebully2024.jpg" },
         { id: "drake", name: "Drake", pic: "upload.wikimedia.org/wikipedia/commons/2/28/Drake_at_The_Come_Up_Show_2011_%28cropped%29.jpg" },
         { id: "kendrick", name: "Kendrick Lamar", pic: "upload.wikimedia.org/wikipedia/commons/3/32/Kendrick_Lamar_2018.jpg" },
         { id: "travis", name: "Travis Scott", pic: "upload.wikimedia.org/wikipedia/commons/1/14/Travis_Scott_-_Openair_Frausenfeld_2019_08_%28cropped%29.jpg" },
@@ -164,7 +164,10 @@ function updateAvatarImage(artistId) {
     selectedArtistId = artistId;
     const target = gameData.artists.find(a => a.id === artistId);
     if(target) {
-        artistAvatar.src = proxy + target.pic;
+        // Check if it's a local image or remote URL
+        const isLocalImage = target.pic.startsWith("images/") || !target.pic.includes("://");
+        const imageSrc = isLocalImage ? target.pic : proxy + target.pic;
+        artistAvatar.src = imageSrc;
         artistAvatar.onerror = () => {
             artistAvatar.src = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
         };
@@ -229,26 +232,24 @@ function renderAlbumGrid(artistAlbums) {
         `;
         albumGrid.appendChild(card);
 
-        // Only try to fetch from iTunes if the album doesn't have a local cover
-        if (!album.cover) {
-            const artistObj = gameData.artists.find(a => a.id === album.artist);
-            const artistName = artistObj ? artistObj.name : "";
-            const apiQueryTerm = encodeURIComponent(`${artistName} ${album.name}`);
+        // Always try to fetch from iTunes to ensure all covers load
+        const artistObj = gameData.artists.find(a => a.id === album.artist);
+        const artistName = artistObj ? artistObj.name : "";
+        const apiQueryTerm = encodeURIComponent(`${artistName} ${album.name}`);
 
-            fetch(`https://itunes.apple.com/search?term=${apiQueryTerm}&entity=album&limit=1`)
-                .then(response => response.json())
-                .then(data => {
-                    const targetImageElement = document.getElementById(`cover-img-${album.id}`);
-                    if (targetImageElement && data.results && data.results.length > 0) {
-                        let structuralArtworkUrl = data.results[0].artworkUrl100;
-                        let highResArtworkUrl = structuralArtworkUrl.replace("100x100bb", "500x500bb");
-                        targetImageElement.src = highResArtworkUrl;
-                    }
-                })
-                .catch(err => {
-                    console.error("iTunes cover fetching failed for album: " + album.name, err);
-                });
-        }
+        fetch(`https://itunes.apple.com/search?term=${apiQueryTerm}&entity=album&limit=1`)
+            .then(response => response.json())
+            .then(data => {
+                const targetImageElement = document.getElementById(`cover-img-${album.id}`);
+                if (targetImageElement && data.results && data.results.length > 0) {
+                    let structuralArtworkUrl = data.results[0].artworkUrl100;
+                    let highResArtworkUrl = structuralArtworkUrl.replace("100x100bb", "500x500bb");
+                    targetImageElement.src = highResArtworkUrl;
+                }
+            })
+            .catch(err => {
+                console.error("iTunes cover fetching failed for album: " + album.name, err);
+            });
     });
 }
 
