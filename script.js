@@ -1,14 +1,18 @@
 const proxy = "https://images.weserv.nl/?url=https://";
+const jsonDir = "json";
+const artistJsonMap = {
+    travis: `${jsonDir}/travis_scott_lyrics.json`
+};
 
 let gameData = {
     artists: [
         { id: "kanye", name: "Kanye West", pic: "artists/kanyebully2024.jpg" },
-        { id: "drake", name: "Drake", pic: "upload.wikimedia.org/wikipedia/commons/2/28/Drake_at_The_Come_Up_Show_2011_%28cropped%29.jpg" },
-        { id: "kendrick", name: "Kendrick Lamar", pic: "upload.wikimedia.org/wikipedia/commons/3/32/Kendrick_Lamar_2018.jpg" },
-        { id: "travis", name: "Travis Scott", pic: "upload.wikimedia.org/wikipedia/commons/1/14/Travis_Scott_-_Openair_Frausenfeld_2019_08_%28cropped%29.jpg" },
-        { id: "eminem", name: "Eminem", pic: "upload.wikimedia.org/wikipedia/commons/4/4a/Eminem_-_Openair_Frauenfeld_2018_03.jpg" },
-        { id: "cardi", name: "Cardi B", pic: "upload.wikimedia.org/wikipedia/commons/b/b3/Cardi_B_-_Grammy_Awards_2019.png" },
-        { id: "nicki", name: "Nicki Minaj", pic: "upload.wikimedia.org/wikipedia/commons/1/1b/Nicki_Minaj_2024.jpg" }
+        { id: "drake", name: "Drake", pic: "artists/drakepfp.avif" },
+        { id: "kendrick", name: "Kendrick Lamar", pic: "artists/kdotpfp.avif" },
+        { id: "travis", name: "Travis Scott", pic: "artists/travispfp.webp" },
+        { id: "eminem", name: "Eminem", pic: "artists/GettyImages-85623204v2.webp" },
+        { id: "cardi", name: "Cardi B", pic: "artists/cardibpfp.jpg" },
+        { id: "nicki", name: "Nicki Minaj", pic: "artists/nickimanajpfp.jpg" }
     ],
     albums: [
         { id: "cd", artist: "kanye", name: "The College Dropout" },
@@ -43,6 +47,8 @@ let gameData = {
         { id: "gkmc", artist: "kendrick", name: "Good Kid, M.A.A.D City" },
         { id: "tpab", artist: "kendrick", name: "To Pimp a Butterfly" },
         { id: "damn", artist: "kendrick", name: "DAMN." },
+        { id: "untitled", artist: "kendrick", name: "untitled unmastered." },
+        { id: "blackpanther", artist: "kendrick", name: "Black Panther: The Album" },
         { id: "mrsm", artist: "kendrick", name: "Mr. Morale & the Big Steppers" },
         { id: "rodeo", artist: "travis", name: "Rodeo" },
         { id: "birds", artist: "travis", name: "Birds in the Trap Sing McKnight" },
@@ -98,6 +104,8 @@ const albumCoverMap = {
     gkmc: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/36/86/ec/3686ec99-dec4-0a01-8b74-2d8a9a0263a7/12UMGIM52988.rgb.jpg/500x500bb.jpg",
     tpab: "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/b5/a6/91/b5a69171-5232-3d5b-9c15-8963802f83dd/15UMGIM15814.rgb.jpg/500x500bb.jpg",
     damn: "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/ab/16/ef/ab16efe9-e7f1-66ec-021c-5592a23f0f9e/17UMGIM88793.rgb.jpg/500x500bb.jpg",
+    untitled: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/60/68/5b/60685bdb-5f89-b56f-ad14-06a92d4f6fac/16UMGIM10771.rgb.jpg/500x500bb.jpg",
+    blackpanther: "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/4d/16/55/4d165549-3d11-86dc-fcbf-be7fe0bcadfb/18UMGIM00002.rgb.jpg/500x500bb.jpg",
     mrsm: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/6b/17/e6/6b17e679-70e0-e00e-93e1-5af4d25ee8c8/22UMGIM52376.rgb.jpg/500x500bb.jpg",
     rodeo: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/6d/fb/f1/6dfbf17d-4032-f585-35ad-f3f9b6859cd9/886445460421.jpg/500x500bb.jpg",
     birds: "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/b8/e5/27/b8e527c8-aaf4-c7b7-5562-c479458ed7d9/886446092645.jpg/500x500bb.jpg",
@@ -131,11 +139,17 @@ Object.keys(albumCoverMap).forEach(id => {
     }
 });
 
-// Load songs from CSV JSON file
+// Load songs from JSON files in the json folder
 async function loadSongsFromJSON() {
     try {
         // Try known JSON filenames in order of preference
-        const candidates = ['kanye_lyrics.json', 'csvjson.json'];
+        const candidates = [
+            `${jsonDir}/kanye_lyrics.json`,
+            `${jsonDir}/drake_lyrics.json`,
+            `${jsonDir}/kendrick_lyrics.json`,
+            `${jsonDir}/travis_scott_lyrics.json`,
+            `${jsonDir}/csvjson.json`
+        ];
         let csvData = null;
         let loadedFrom = null;
         for (const fname of candidates) {
@@ -157,7 +171,7 @@ async function loadSongsFromJSON() {
         console.log(`Loading songs from ${loadedFrom}`);
         processCsvData(csvData);
     } catch (error) {
-        console.error("Error loading songs from CSV JSON:", error);
+        console.error("Error loading songs from JSON:", error);
     }
 }
 
@@ -197,10 +211,10 @@ function processCsvData(csvData) {
     console.log(`Loaded ${gameData.songs.length} songs`);
 }
 
-// Try to load an artist-specific JSON file (e.g., drake_lyrics.json)
+// Try to load an artist-specific JSON file from json folder
 async function loadSongsForArtist(artistId) {
     if (!artistId) return;
-    const fname = `${artistId}_lyrics.json`;
+    const fname = artistJsonMap[artistId] || `${jsonDir}/${artistId}_lyrics.json`;
     try {
         const resp = await fetch(fname);
         if (!resp.ok) {
@@ -219,10 +233,14 @@ async function loadSongsForArtist(artistId) {
 }
 
 let points = 0;
-let selectedArtistId = "kanye";
+let selectedArtistId = "kendrick";
 let currentRound = { albumId: "", songName: "", lyrics: "" };
 let currentGuessAlbumId = "";
 let currentSongsSourceArtist = null;
+let players = [];
+let currentPlayerIndex = 0;
+let multiplayerMode = false;
+let sharedRoomState = null;
 
 const startScreen = document.getElementById("start-screen");
 const gameScreen = document.getElementById("game-screen");
@@ -236,6 +254,19 @@ const songList = document.getElementById("song-select-list");
 const selectedAlbumNameDisplay = document.getElementById("selected-album-name");
 const songOptionsContainer = document.getElementById("song-options-container");
 const pointsDisplay = document.getElementById("current-points");
+const multiplayerToggle = document.getElementById("multiplayer-toggle");
+const multiplayerInputsContainer = document.getElementById("multiplayer-player-inputs");
+const addPlayerBtn = document.getElementById("add-player-btn");
+const createRoomBtn = document.getElementById("create-room-btn");
+const roomShareContainer = document.getElementById("room-share");
+const roomLinkInput = document.getElementById("room-link");
+const copyRoomLinkBtn = document.getElementById("copy-room-link");
+const joinRoomInput = document.getElementById("join-room-input");
+const joinRoomBtn = document.getElementById("join-room-btn");
+const roomControls = document.getElementById("room-controls");
+const roomMessage = document.getElementById("room-message");
+const currentPlayerDisplay = document.getElementById("current-player");
+const playerDisplay = document.getElementById("player-display");
 const feedbackDisplay = document.getElementById("feedback");
 const leaderboardBody = document.getElementById("leaderboard-body");
 const emptyLeaderboardText = document.getElementById("empty-leaderboard");
@@ -249,12 +280,18 @@ document.getElementById("back-to-start-btn").onclick = () => {
 };
 document.getElementById("clear-leaderboard-btn").onclick = clearLeaderboard;
 document.getElementById("cancel-song-select").onclick = resetGuessArea;
+document.getElementById("start-multiplayer-button").onclick = startMultiplayerGame;
+addPlayerBtn.onclick = addMultiplayerPlayerInput;
+createRoomBtn.onclick = createSharedRoom;
+copyRoomLinkBtn.onclick = copyRoomLink;
+joinRoomBtn.onclick = joinSharedRoom;
 
 window.onload = async () => {
     await loadSongsFromJSON();
     populateDropdown(gameData.artists);
     // Load artist-specific file for the initially selected artist, if available.
     await loadSongsForArtist(artistDropdown.value);
+    loadRoomFromUrl();
 };
 
 function populateDropdown(list) {
@@ -266,8 +303,9 @@ function populateDropdown(list) {
         artistDropdown.appendChild(opt);
     });
     if(list.length > 0) {
-        artistDropdown.value = list[0].id;
-        updateAvatarImage(list[0].id);
+        const selectedValue = list.some(a => a.id === selectedArtistId) ? selectedArtistId : list[0].id;
+        artistDropdown.value = selectedValue;
+        updateAvatarImage(selectedValue);
     }
 }
 
@@ -277,10 +315,10 @@ function onSearchChange() {
     populateDropdown(filtered);
 }
 
-function onDropdownSelect() {
+async function onDropdownSelect() {
     updateAvatarImage(artistDropdown.value);
     // Attempt to load an artist-specific lyrics JSON (e.g., drake_lyrics.json)
-    loadSongsForArtist(artistDropdown.value);
+    await loadSongsForArtist(artistDropdown.value);
 }
 
 function updateAvatarImage(artistId) {
@@ -297,6 +335,217 @@ function updateAvatarImage(artistId) {
     }
 }
 
+function onMultiplayerToggle() {
+    const enabled = multiplayerToggle.checked;
+    multiplayerInputsContainer.classList.toggle("hidden", !enabled);
+    roomControls.classList.toggle("hidden", !enabled);
+    roomShareContainer.classList.add("hidden");
+    roomLinkInput.value = "";
+    setRoomMessage("");
+    document.getElementById("start-button").classList.toggle("hidden", enabled);
+    document.getElementById("start-multiplayer-button").classList.toggle("hidden", !enabled);
+}
+
+function addMultiplayerPlayerInput() {
+    const existingInputs = multiplayerInputsContainer.querySelectorAll("input[type='text']");
+    if (existingInputs.length >= 4) return;
+
+    const nextNumber = existingInputs.length + 1;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = `player-name-${nextNumber}`;
+    input.placeholder = `Player ${nextNumber}`;
+    input.maxLength = 20;
+    multiplayerInputsContainer.insertBefore(input, addPlayerBtn);
+
+    if (nextNumber === 4) {
+        addPlayerBtn.classList.add("hidden");
+    }
+}
+
+function getMultiplayerNames() {
+    const inputs = multiplayerInputsContainer.querySelectorAll("input[type='text']");
+    return Array.from(inputs)
+        .map((input, index) => input.value.trim() || `Player ${index + 1}`)
+        .filter(Boolean);
+}
+
+function setRoomMessage(message, isError = false) {
+    roomMessage.textContent = message;
+    roomMessage.style.color = isError ? "#ff8a80" : "#ccc";
+}
+
+function encodeRoomState(state) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+}
+
+function decodeRoomState(code) {
+    return JSON.parse(decodeURIComponent(escape(atob(code))));
+}
+
+function extractRoomCode(raw) {
+    if (!raw) return null;
+    try {
+        const parsed = new URL(raw);
+        return parsed.searchParams.get("room") || null;
+    } catch (e) {
+        return raw;
+    }
+}
+
+function createSharedRoom() {
+    const names = getMultiplayerNames();
+    if (names.length < 2) {
+        alert("Please add at least 2 players to create a shared room.");
+        return;
+    }
+
+    const roomState = {
+        version: 1,
+        artistId: selectedArtistId,
+        playerNames: names,
+        currentPlayerIndex: 0,
+        createdAt: Date.now()
+    };
+
+    sharedRoomState = roomState;
+    const code = encodeRoomState(roomState);
+    roomLinkInput.value = `${window.location.origin}${window.location.pathname}?room=${code}`;
+    roomShareContainer.classList.remove("hidden");
+    setRoomMessage("Room created! Share this link with friends so they can join from another device.");
+}
+
+function copyRoomLink() {
+    if (!roomLinkInput.value) return;
+    navigator.clipboard?.writeText(roomLinkInput.value).then(() => {
+        setRoomMessage("Room link copied to clipboard.");
+    }).catch(() => {
+        roomLinkInput.select();
+        document.execCommand("copy");
+        setRoomMessage("Room link copied to clipboard.");
+    });
+}
+
+function joinSharedRoom() {
+    const raw = joinRoomInput.value.trim();
+    if (!raw) {
+        setRoomMessage("Paste a room link or code to join.", true);
+        return;
+    }
+
+    const code = extractRoomCode(raw);
+    if (!code) {
+        setRoomMessage("Invalid room link or code.", true);
+        return;
+    }
+
+    try {
+        const roomState = decodeRoomState(code);
+        loadRoomState(roomState);
+    } catch (err) {
+        console.error(err);
+        setRoomMessage("Unable to read that room link. Please try again.", true);
+    }
+}
+
+function loadRoomState(state) {
+    if (!state || state.version !== 1 || !state.artistId || !Array.isArray(state.playerNames)) {
+        setRoomMessage("This room state is invalid.", true);
+        return;
+    }
+
+    multiplayerToggle.checked = true;
+    onMultiplayerToggle();
+
+    selectedArtistId = state.artistId;
+    if (gameData.artists.some(a => a.id === selectedArtistId)) {
+        artistDropdown.value = selectedArtistId;
+        updateAvatarImage(selectedArtistId);
+    }
+
+    while (multiplayerInputsContainer.querySelectorAll("input[type='text']").length < state.playerNames.length) {
+        addMultiplayerPlayerInput();
+    }
+
+    const inputs = multiplayerInputsContainer.querySelectorAll("input[type='text']");
+    inputs.forEach((input, index) => {
+        input.value = state.playerNames[index] || `Player ${index + 1}`;
+    });
+
+    players = state.playerNames.map(name => ({ name, score: 0 }));
+    currentPlayerIndex = state.currentPlayerIndex || 0;
+    multiplayerMode = true;
+    sharedRoomState = state;
+
+    const code = encodeRoomState(state);
+    roomLinkInput.value = `${window.location.origin}${window.location.pathname}?room=${code}`;
+    roomShareContainer.classList.remove("hidden");
+    setRoomMessage("Room joined! Click START MULTIPLAYER to begin the shared game.");
+}
+
+function loadRoomFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("room");
+    if (!code) return;
+    try {
+        const state = decodeRoomState(code);
+        loadRoomState(state);
+        setRoomMessage("Room loaded from link. Ready to start multiplayer.");
+    } catch (err) {
+        console.warn("Invalid room link in URL", err);
+    }
+}
+
+function updatePlayerDisplay() {
+    if (!multiplayerMode || players.length === 0) {
+        playerDisplay.classList.add("hidden");
+        return;
+    }
+    playerDisplay.classList.remove("hidden");
+    currentPlayerDisplay.textContent = players[currentPlayerIndex].name;
+}
+
+function getCurrentPoints() {
+    return multiplayerMode ? players[currentPlayerIndex].score : points;
+}
+
+function setCurrentPoints(value) {
+    if (multiplayerMode) {
+        players[currentPlayerIndex].score = value;
+    } else {
+        points = value;
+    }
+    pointsDisplay.innerText = value;
+}
+
+function incrementCurrentPoints() {
+    setCurrentPoints(getCurrentPoints() + 1);
+}
+
+function nextPlayerTurn() {
+    if (!multiplayerMode || players.length <= 1) {
+        loadNewRound();
+        return;
+    }
+
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    updatePlayerDisplay();
+    pointsDisplay.innerText = getCurrentPoints();
+    loadNewRound();
+}
+
+async function startMultiplayerGame() {
+    const names = getMultiplayerNames();
+    if (names.length < 2) {
+        alert("Please enter at least two player names to start multiplayer.");
+        return;
+    }
+    players = names.map(name => ({ name, score: 0 }));
+    currentPlayerIndex = 0;
+    multiplayerMode = true;
+    await startGame();
+}
+
 async function startGame() {
     if(!selectedArtistId) return;
     if (currentSongsSourceArtist !== selectedArtistId) {
@@ -304,8 +553,16 @@ async function startGame() {
     }
     startScreen.classList.add("hidden");
     gameScreen.classList.remove("hidden");
-    points = 0;
-    pointsDisplay.innerText = points;
+    if (multiplayerMode) {
+        players.forEach(player => player.score = 0);
+        currentPlayerIndex = 0;
+        updatePlayerDisplay();
+        setCurrentPoints(getCurrentPoints());
+    } else {
+        points = 0;
+        pointsDisplay.innerText = points;
+        playerDisplay.classList.add("hidden");
+    }
     loadNewRound();
 }
 
@@ -479,13 +736,16 @@ function selectAlbum(albumId, albumName) {
 function submitGuess(guessedSongName) {
     const isCorrect = (guessedSongName === currentRound.songName) && (currentGuessAlbumId === currentRound.albumId);
     if (isCorrect) {
-        points++;
-        pointsDisplay.innerText = points;
+        incrementCurrentPoints();
         showFeedback(true, "Correct! Great job!");
-        setTimeout(loadNewRound, 1500); 
+        setTimeout(() => {
+            if (multiplayerMode) nextPlayerTurn(); else loadNewRound();
+        }, 1500);
     } else {
         showFeedback(false, `Incorrect! The answer was "${currentRound.songName}" on ${gameData.albums.find(a => a.id === currentRound.albumId).name}.`);
-        setTimeout(loadNewRound, 3000); 
+        setTimeout(() => {
+            if (multiplayerMode) nextPlayerTurn(); else loadNewRound();
+        }, 3000);
     }
 }
 
@@ -497,7 +757,13 @@ function showFeedback(isCorrect, text) {
 
 function endGame() {
     gameScreen.classList.add("hidden");
-    if (points > 0) {
+    if (multiplayerMode) {
+        players.forEach(player => {
+            if (player.score > 0) {
+                saveScore(player.name, player.score);
+            }
+        });
+    } else if (points > 0) {
         const playerName = prompt("Game Over! Enter your name to save your score:", "Player 1");
         if (playerName && playerName.trim() !== "") {
             saveScore(playerName.trim(), points);

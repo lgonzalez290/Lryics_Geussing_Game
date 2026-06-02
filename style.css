@@ -24,6 +24,152 @@ h1 { margin-top: 0; font-weight: 800; text-transform: uppercase; letter-spacing:
 button { cursor: pointer; border: none; transition: background 0.2s; }
 .hidden { display: none !important; }
 
+.multiplayer-setup {
+    margin: 1.5rem auto 0;
+    max-width: 440px;
+    text-align: left;
+}
+
+.multiplayer-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: #ddd;
+    cursor: pointer;
+}
+
+#multiplayer-player-inputs {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 10px;
+    align-items: center;
+}
+
+#multiplayer-player-inputs input,
+.room-join-group input,
+#room-link {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #1e1e1e;
+    border: 1px solid #3a3a3a;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+#multiplayer-player-inputs input:focus,
+.room-join-group input:focus,
+#room-link:focus {
+    border-color: #ff5722;
+    box-shadow: 0 0 0 4px rgba(255, 87, 34, 0.12);
+}
+
+#multiplayer-player-inputs .hint-text {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #bbb;
+    font-size: 0.85rem;
+}
+
+#multiplayer-player-inputs button,
+.room-join-group button,
+#copy-room-link {
+    grid-column: 1 / -1;
+}
+
+.room-controls {
+    margin-top: 18px;
+    padding: 18px;
+    background: linear-gradient(145deg, #212121, #1a1a1a);
+    border: 1px solid #333;
+    border-radius: 24px;
+}
+
+.room-share {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.room-join-group {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.room-message {
+    margin-top: 12px;
+    color: #ccc;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+#room-link {
+    cursor: default;
+}
+
+#game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+#player-display {
+    font-size: 1rem;
+    color: #ffcc80;
+    border: 1px solid #ff5722;
+    padding: 10px 14px;
+    border-radius: 18px;
+    background: rgba(255, 87, 34, 0.08);
+}
+
+#points-display {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffeb3b;
+}
+
+.album-card {
+    background: linear-gradient(180deg, #1f1f1f, #181818);
+    border-radius: 18px;
+    padding: 16px;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.album-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.35);
+    border-color: #ff5722;
+}
+
+.song-option {
+    background: linear-gradient(135deg, #232323, #1f1f1f);
+    padding: 18px 16px;
+    margin-bottom: 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 1.1rem;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+.song-option:hover { background-color: #393939; border-color: #ff5722; }
+
 /* ========================
    START SCREEN VISUAL UPGRADE
    ======================== */

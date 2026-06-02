@@ -13,6 +13,30 @@
             <div class="search-wrapper">
                 <input type="text" id="search-artist-input" placeholder="🔍 Search or filter artist..." oninput="onSearchChange()">
             </div>
+            <div id="multiplayer-setup" class="multiplayer-setup">
+                <label class="multiplayer-toggle">
+                    <input type="checkbox" id="multiplayer-toggle" onchange="onMultiplayerToggle()">
+                    Play multiplayer
+                </label>
+                <div id="multiplayer-player-inputs" class="hidden">
+                    <input id="player-name-1" type="text" placeholder="Player 1" maxlength="20">
+                    <input id="player-name-2" type="text" placeholder="Player 2" maxlength="20">
+                    <button id="add-player-btn" class="secondary-btn" type="button">Add player</button>
+                    <p class="hint-text">You can add up to 4 players.</p>
+                </div>
+                <div id="room-controls" class="hidden room-controls">
+                    <button id="create-room-btn" class="secondary-btn" type="button">Create shared room</button>
+                    <div id="room-share" class="hidden room-share">
+                        <input id="room-link" type="text" readonly placeholder="Share this link" />
+                        <button id="copy-room-link" class="secondary-btn" type="button">Copy Link</button>
+                    </div>
+                    <div class="room-join-group">
+                        <input id="join-room-input" type="text" placeholder="Paste room link or code" />
+                        <button id="join-room-btn" class="secondary-btn" type="button">Join room</button>
+                    </div>
+                    <div id="room-message" class="room-message"></div>
+                </div>
+            </div>
             <div class="artist-picker-container">
                 <div class="selected-artist-preview">
                     <img id="artist-view-avatar" class="artist-img-frame" src="" alt="Artist Profile Avatar">
@@ -20,13 +44,15 @@
                     </select>
                 </div>
             </div>
-            <button id="start-button" class="primary-btn">START GUESSING</button>
+            <button id="start-button" class="primary-btn">START SOLO</button>
+            <button id="start-multiplayer-button" class="secondary-btn hidden">START MULTIPLAYER</button>
             <br>
             <button id="view-leaderboard-btn" class="secondary-btn">View Leaderboard</button>
         </div>
         <div id="game-screen" class="hidden">
             <div id="game-header">
                 <button id="end-game-btn" class="secondary-btn">End Game & Save Score</button>
+                <div id="player-display" class="hidden">Current turn: <span id="current-player"></span></div>
                 <div id="points-display">Points: <span id="current-points">0</span></div>
             </div>
             <div id="lyric-display">"Loading lyrics..."</div>
