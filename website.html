@@ -27,11 +27,20 @@
                 <div id="room-controls" class="hidden room-controls">
                     <button id="create-room-btn" class="secondary-btn" type="button">Create shared room</button>
                     <div id="room-share" class="hidden room-share">
-                        <input id="room-link" type="text" readonly placeholder="Share this link" />
-                        <button id="copy-room-link" class="secondary-btn" type="button">Copy Link</button>
+                        <div class="room-share-field">
+                            <input id="room-link" type="text" readonly placeholder="Share this link" />
+                            <button id="copy-room-link" class="secondary-btn" type="button">Copy Link</button>
+                        </div>
+                    </div>
+                    <div id="room-stats" class="hidden" style="margin-top: 12px; color: #ccc;">
+                        <div>Players in lobby: <span id="lobby-count">0</span></div>
+                    </div>
+                    <div id="host-note" class="hidden host-note">You are the room creator. Click START MULTIPLAYER when ready. You will go first.</div>
+                    <div id="joiner-waiting" class="hidden waiting-panel">
+                        Waiting for <span id="host-name-display"></span> to start the game...
                     </div>
                     <div class="room-join-group">
-                        <input id="join-room-input" type="text" placeholder="Paste room link or code" />
+                        <input id="join-room-input" type="text" placeholder="Paste room link" />
                         <button id="join-room-btn" class="secondary-btn" type="button">Join room</button>
                     </div>
                     <div id="room-message" class="room-message"></div>

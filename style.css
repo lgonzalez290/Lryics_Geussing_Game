@@ -42,8 +42,8 @@ button { cursor: pointer; border: none; transition: background 0.2s; }
 #multiplayer-player-inputs {
     margin-top: 12px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    gap: 12px;
     align-items: center;
 }
 
@@ -51,8 +51,8 @@ button { cursor: pointer; border: none; transition: background 0.2s; }
 .room-join-group input,
 #room-link {
     width: 100%;
-    padding: 12px 14px;
-    border-radius: 16px;
+    padding: 14px 16px;
+    border-radius: 18px;
     background: #1e1e1e;
     border: 1px solid #3a3a3a;
     color: #fff;
@@ -64,14 +64,14 @@ button { cursor: pointer; border: none; transition: background 0.2s; }
 .room-join-group input:focus,
 #room-link:focus {
     border-color: #ff5722;
-    box-shadow: 0 0 0 4px rgba(255, 87, 34, 0.12);
+    box-shadow: 0 0 0 5px rgba(255, 87, 34, 0.14);
 }
 
 #multiplayer-player-inputs .hint-text {
     grid-column: 1 / -1;
     margin: 0;
     color: #bbb;
-    font-size: 0.85rem;
+    font-size: 0.86rem;
 }
 
 #multiplayer-player-inputs button,
@@ -82,24 +82,72 @@ button { cursor: pointer; border: none; transition: background 0.2s; }
 
 .room-controls {
     margin-top: 18px;
-    padding: 18px;
-    background: linear-gradient(145deg, #212121, #1a1a1a);
+    padding: 20px;
+    background: linear-gradient(145deg, #242424, #1b1b1b);
     border: 1px solid #333;
-    border-radius: 24px;
+    border-radius: 26px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
 }
 
 .room-share {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 16px;
+}
+
+.room-share-field {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.room-share-field input {
+    min-width: 0;
 }
 
 .room-join-group {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 16px;
+}
+
+#room-stats {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: rgba(255, 87, 34, 0.08);
+    border: 1px solid rgba(255, 87, 34, 0.2);
+    border-radius: 18px;
+    color: #ffd8a8;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+}
+
+.host-note,
+.waiting-panel {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #d3d3d3;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.waiting-panel {
+    background: rgba(33, 33, 33, 0.9);
+    border-color: rgba(255, 87, 34, 0.25);
+    color: #ffcc80;
+}
+
+#room-share input[readonly] {
+    cursor: text;
 }
 
 .room-message {

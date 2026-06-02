@@ -1,7 +1,10 @@
 const proxy = "https://images.weserv.nl/?url=https://";
 const jsonDir = "json";
 const artistJsonMap = {
-    travis: `${jsonDir}/travis_scott_lyrics.json`
+    travis: `${jsonDir}/travis_scott_lyrics.json`,
+    cardi: `${jsonDir}/cardi_B_lyrics.json`,
+    nicki: `${jsonDir}/nicki_minaj.json`,
+    rodwave: `${jsonDir}/rod_wave_lyrics.json`
 };
 
 let gameData = {
@@ -12,7 +15,8 @@ let gameData = {
         { id: "travis", name: "Travis Scott", pic: "artists/travispfp.webp" },
         { id: "eminem", name: "Eminem", pic: "artists/GettyImages-85623204v2.webp" },
         { id: "cardi", name: "Cardi B", pic: "artists/cardibpfp.jpg" },
-        { id: "nicki", name: "Nicki Minaj", pic: "artists/nickimanajpfp.jpg" }
+        { id: "nicki", name: "Nicki Minaj", pic: "artists/nickimanajpfp.jpg" },
+        { id: "rodwave", name: "Rod Wave", pic: "artists/rod_wave.jpg" }
     ],
     albums: [
         { id: "cd", artist: "kanye", name: "The College Dropout" },
@@ -54,6 +58,12 @@ let gameData = {
         { id: "birds", artist: "travis", name: "Birds in the Trap Sing McKnight" },
         { id: "astro", artist: "travis", name: "Astroworld" },
         { id: "utopia", artist: "travis", name: "Utopia" },
+        { id: "ghetto_gospel", artist: "rodwave", name: "Ghetto Gospel" },
+        { id: "pray4love", artist: "rodwave", name: "Pray 4 Love" },
+        { id: "soulfly", artist: "rodwave", name: "SoulFly" },
+        { id: "beautiful_mind", artist: "rodwave", name: "Beautiful Mind" },
+        { id: "nostalgia", artist: "rodwave", name: "Nostalgia" },
+        { id: "legend", artist: "rodwave", name: "Legend" },
         { id: "sslp", artist: "eminem", name: "The Slim Shady LP" },
         { id: "mmlp", artist: "eminem", name: "The Marshall Mathers LP" },
         { id: "tes", artist: "eminem", name: "The Eminem Show" },
@@ -65,9 +75,11 @@ let gameData = {
         { id: "kamikaze", artist: "eminem", name: "Kamikaze" },
         { id: "mtbmb", artist: "eminem", name: "Music to Be Murdered By" },
         { id: "tdoss", artist: "eminem", name: "The Death of Slim Shady (Coup de Grâce)" },
+        { id: "8mile", artist: "eminem", name: "8 Mile Soundtrack" },
         { id: "gbm1", artist: "cardi", name: "Gangsta Bitch Music, Vol. 1" },
         { id: "gbm2", artist: "cardi", name: "Gangsta Bitch Music, Vol. 2" },
         { id: "iop", artist: "cardi", name: "Invasion of Privacy" },
+        { id: "single", artist: "cardi", name: "Single" },
         { id: "pf", artist: "nicki", name: "Pink Friday" },
         { id: "rr", artist: "nicki", name: "Pink Friday: Roman Reloaded" },
         { id: "pp", artist: "nicki", name: "The Pinkprint" },
@@ -148,6 +160,10 @@ async function loadSongsFromJSON() {
             `${jsonDir}/drake_lyrics.json`,
             `${jsonDir}/kendrick_lyrics.json`,
             `${jsonDir}/travis_scott_lyrics.json`,
+            `${jsonDir}/eminem_lyrics.json`,
+            `${jsonDir}/cardi_B_lyrics.json`,
+            `${jsonDir}/nicki_minaj.json`,
+            `${jsonDir}/rod_wave_lyrics.json`,
             `${jsonDir}/csvjson.json`
         ];
         let csvData = null;
@@ -241,6 +257,8 @@ let players = [];
 let currentPlayerIndex = 0;
 let multiplayerMode = false;
 let sharedRoomState = null;
+let localHostToken = localStorage.getItem("lyricsGuesserHostToken");
+let isHost = false;
 
 const startScreen = document.getElementById("start-screen");
 const gameScreen = document.getElementById("game-screen");
@@ -264,7 +282,12 @@ const copyRoomLinkBtn = document.getElementById("copy-room-link");
 const joinRoomInput = document.getElementById("join-room-input");
 const joinRoomBtn = document.getElementById("join-room-btn");
 const roomControls = document.getElementById("room-controls");
+const roomStats = document.getElementById("room-stats");
+const lobbyCountDisplay = document.getElementById("lobby-count");
 const roomMessage = document.getElementById("room-message");
+const hostNote = document.getElementById("host-note");
+const joinerWaitingPanel = document.getElementById("joiner-waiting");
+const hostNameDisplay = document.getElementById("host-name-display");
 const currentPlayerDisplay = document.getElementById("current-player");
 const playerDisplay = document.getElementById("player-display");
 const feedbackDisplay = document.getElementById("feedback");
@@ -340,10 +363,17 @@ function onMultiplayerToggle() {
     multiplayerInputsContainer.classList.toggle("hidden", !enabled);
     roomControls.classList.toggle("hidden", !enabled);
     roomShareContainer.classList.add("hidden");
+    roomStats.classList.add("hidden");
+    hostNote.classList.add("hidden");
+    joinerWaitingPanel.classList.add("hidden");
     roomLinkInput.value = "";
     setRoomMessage("");
     document.getElementById("start-button").classList.toggle("hidden", enabled);
     document.getElementById("start-multiplayer-button").classList.toggle("hidden", !enabled);
+    if (!enabled) {
+        multiplayerToggle.disabled = false;
+        isHost = false;
+    }
 }
 
 function addMultiplayerPlayerInput() {
@@ -375,12 +405,49 @@ function setRoomMessage(message, isError = false) {
     roomMessage.style.color = isError ? "#ff8a80" : "#ccc";
 }
 
+function updateLobbyCount() {
+    const count = players.length || getMultiplayerNames().length;
+    lobbyCountDisplay.textContent = count;
+    roomStats.classList.toggle("hidden", count === 0);
+}
+
+function setHostLobbyMode() {
+    isHost = true;
+    multiplayerToggle.disabled = false;
+    hostNote.classList.remove("hidden");
+    joinerWaitingPanel.classList.add("hidden");
+    createRoomBtn.classList.add("hidden");
+    joinRoomInput.classList.add("hidden");
+    joinRoomBtn.classList.add("hidden");
+    roomShareContainer.classList.remove("hidden");
+    document.getElementById("start-multiplayer-button").classList.remove("hidden");
+}
+
+function setJoinerLobbyMode(state) {
+    isHost = false;
+    multiplayerToggle.checked = true;
+    multiplayerToggle.disabled = true;
+    multiplayerInputsContainer.classList.add("hidden");
+    createRoomBtn.classList.add("hidden");
+    roomShareContainer.classList.add("hidden");
+    joinerWaitingPanel.classList.remove("hidden");
+    hostNote.classList.add("hidden");
+    joinRoomInput.classList.add("hidden");
+    joinRoomBtn.classList.add("hidden");
+    hostNameDisplay.textContent = state.hostName || "the room creator";
+    setRoomMessage(`Waiting for ${state.hostName || "the host"} to start multiplayer. You cannot start the game.`, false);
+}
+
 function encodeRoomState(state) {
     return btoa(unescape(encodeURIComponent(JSON.stringify(state))));
 }
 
 function decodeRoomState(code) {
     return JSON.parse(decodeURIComponent(escape(atob(code))));
+}
+
+function getBaseUrl() {
+    return window.location.href.split("?")[0].split("#")[0];
 }
 
 function extractRoomCode(raw) {
@@ -400,19 +467,29 @@ function createSharedRoom() {
         return;
     }
 
+    const hostToken = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+    localHostToken = hostToken;
+    localStorage.setItem("lyricsGuesserHostToken", hostToken);
+
     const roomState = {
         version: 1,
         artistId: selectedArtistId,
         playerNames: names,
         currentPlayerIndex: 0,
+        hostToken,
+        hostName: names[0],
+        isStarted: false,
         createdAt: Date.now()
     };
 
     sharedRoomState = roomState;
     const code = encodeRoomState(roomState);
-    roomLinkInput.value = `${window.location.origin}${window.location.pathname}?room=${code}`;
+    const baseUrl = getBaseUrl();
+    roomLinkInput.value = `${baseUrl}?room=${encodeURIComponent(code)}`;
     roomShareContainer.classList.remove("hidden");
-    setRoomMessage("Room created! Share this link with friends so they can join from another device.");
+    updateLobbyCount();
+    setHostLobbyMode();
+    setRoomMessage("Room created! Share this link with friends to join. You go first.");
 }
 
 function copyRoomLink() {
@@ -478,9 +555,17 @@ function loadRoomState(state) {
     sharedRoomState = state;
 
     const code = encodeRoomState(state);
-    roomLinkInput.value = `${window.location.origin}${window.location.pathname}?room=${code}`;
+    const baseUrl = getBaseUrl();
+    roomLinkInput.value = `${baseUrl}?room=${encodeURIComponent(code)}`;
     roomShareContainer.classList.remove("hidden");
-    setRoomMessage("Room joined! Click START MULTIPLAYER to begin the shared game.");
+    updateLobbyCount();
+
+    if (state.hostToken && localHostToken === state.hostToken) {
+        setHostLobbyMode();
+        setRoomMessage("Room loaded as host. You go first when you start multiplayer.");
+    } else {
+        setJoinerLobbyMode(state);
+    }
 }
 
 function loadRoomFromUrl() {
@@ -502,7 +587,7 @@ function updatePlayerDisplay() {
         return;
     }
     playerDisplay.classList.remove("hidden");
-    currentPlayerDisplay.textContent = players[currentPlayerIndex].name;
+    currentPlayerDisplay.textContent = `${players[currentPlayerIndex].name} is answering`;
 }
 
 function getCurrentPoints() {
@@ -535,6 +620,10 @@ function nextPlayerTurn() {
 }
 
 async function startMultiplayerGame() {
+    if (!isHost) {
+        alert("Only the room creator can start multiplayer.");
+        return;
+    }
     const names = getMultiplayerNames();
     if (names.length < 2) {
         alert("Please enter at least two player names to start multiplayer.");
@@ -543,6 +632,14 @@ async function startMultiplayerGame() {
     players = names.map(name => ({ name, score: 0 }));
     currentPlayerIndex = 0;
     multiplayerMode = true;
+    if (sharedRoomState) {
+        sharedRoomState.isStarted = true;
+        sharedRoomState.currentPlayerIndex = 0;
+        const code = encodeRoomState(sharedRoomState);
+        roomLinkInput.value = `${getBaseUrl()}?room=${encodeURIComponent(code)}`;
+    }
+    updateLobbyCount();
+    setRoomMessage("Multiplayer started. You go first.");
     await startGame();
 }
 

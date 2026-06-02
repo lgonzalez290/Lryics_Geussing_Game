@@ -15,6 +15,10 @@ Lyrics Guesser is a browser-based music trivia game that challenges players to i
 - Song selection stage from the chosen album.
 - Correct/incorrect feedback and point tracking.
 - End game flow, score save prompt, leaderboard display.
+- Multiplayer room creation and joining with shareable link only.
+- Lobby display showing connected player count and usernames.
+- Only the room creator can start multiplayer; joiners wait in a simplified lobby.
+- Current player's turn displayed prominently as "is answering" during multiplayer.
 
 ## Data Sources
 - `gameData.artists`: configured artist metadata, including the start-page avatar image.
@@ -25,6 +29,10 @@ Lyrics Guesser is a browser-based music trivia game that challenges players to i
   - `json/drake_lyrics.json`
   - `json/kendrick_lyrics.json`
   - `json/travis_scott_lyrics.json`
+  - `json/eminem_lyrics.json`
+  - `json/cardi_B_lyrics.json`
+  - `json/nicki_minaj.json`
+  - `json/rod_wave_lyrics.json`
   - `json/csvjson.json`
 - `albumCoverMap`: explicit cover art URLs for many albums.
 - iTunes API fallback: dynamic album cover fetch when a cover art entry is missing.
@@ -47,11 +55,19 @@ Lyrics Guesser is a browser-based music trivia game that challenges players to i
 - [ ] Load the correct artist-specific JSON when available.
 - [ ] Support Kendrick Lamar by reading `json/kendrick_lyrics.json`.
 - [ ] Support Travis Scott by reading `json/travis_scott_lyrics.json`.
+- [ ] Support Eminem by reading `json/eminem_lyrics.json`.
+- [ ] Support Cardi B by reading `json/cardi_B_lyrics.json`.
+- [ ] Support Nicki Minaj by reading `json/nicki_minaj.json`.
+- [ ] Support Rod Wave by reading `json/rod_wave_lyrics.json`.
 - [ ] Use the provided Kendrick avatar on the start page.
 - [ ] Use the provided Travis avatar on the start page.
 - [ ] Display album covers using local map data or iTunes fallback.
 - [ ] Only show albums and songs for the selected artist.
 - [ ] Save and display a top-10 leaderboard.
+- [ ] Only the room creator can start a multiplayer session.
+- [ ] Joiners see a simplified waiting lobby until the host starts the game.
+- [ ] Support multiplayer room state encoded in URL or shared code.
+- [ ] Display the active player and enforce a single active turn at a time.
 
 ### Non-functional Requirements
 - [ ] Operate entirely in the browser with no server backend.

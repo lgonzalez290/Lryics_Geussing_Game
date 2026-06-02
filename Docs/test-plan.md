@@ -32,6 +32,26 @@ This test plan validates the Lyrics Guesser browser game behavior and ensures Ke
 - Expected: lyrics and albums load from `json/travis_scott_lyrics.json`.
 - Expected: album grid contains Travis albums like `Rodeo`, `Birds in the Trap Sing McKnight`, `Astroworld`, and `Utopia`.
 
+### 5. Load Nicki Minaj Lyrics
+- Select Nicki Minaj from the artist dropdown.
+- Expected: lyrics and albums load from `json/nicki_minaj.json`.
+- Expected: album grid contains Nicki albums like `Pink Friday`, `Pink Friday: Roman Reloaded`, `The Pinkprint`, `Queen`, and `Pink Friday 2`.
+
+### 6. Load Rod Wave Lyrics
+- Select Rod Wave from the artist dropdown.
+- Expected: lyrics and albums load from `json/rod_wave_lyrics.json`.
+- Expected: album grid contains Rod Wave albums like `Ghetto Gospel`, `Pray 4 Love`, `SoulFly`, `Beautiful Mind`, `Nostalgia`, and `Legend`.
+
+### 5. Load Eminem Lyrics
+- Select Eminem from the artist dropdown.
+- Expected: lyrics and albums load from `json/eminem_lyrics.json`.
+- Expected: album grid contains Eminem albums like `The Slim Shady LP`, `The Marshall Mathers LP`, `The Eminem Show`, `Encore`, `Relapse`, `Recovery`, `The Marshall Mathers LP 2`, `Revival`, `Kamikaze`, `Music to Be Murdered By`, `The Death of Slim Shady (Coup de Grâce)`, and `8 Mile Soundtrack`.
+
+### 6. Load Cardi B Lyrics
+- Select Cardi B from the artist dropdown.
+- Expected: lyrics and albums load from `json/cardi_B_lyrics.json`.
+- Expected: album grid contains Cardi albums like `Invasion of Privacy` and `Single`.
+
 ### 5. Album Cover Display
 - On the album grid, verify covers appear.
 - Expected: Kendrick albums with mapped cover URLs display correctly.
@@ -51,17 +71,32 @@ This test plan validates the Lyrics Guesser browser game behavior and ensures Ke
 - Select an album and then click `← Choose a different album`.
 - Expected: return to album selection view.
 
-### 8. End Game & Leaderboard
+### 8. Multiplayer Room Creation
+- Enable multiplayer mode and add at least two player names.
+- Click `Create shared room`.
+- Expected: a room link is generated.
+- Expected: `Players in lobby` shows the current player count.
+- Expected: the room creator sees a host note and is prompted to start multiplayer.
+
+### 9. Multiplayer Join Flow
+- Paste the generated room link into the join field.
+- Click `Join room`.
+- Expected: the lobby rehydrates the player list and selected artist.
+- Expected: joiners do not see the start button and instead see a waiting panel.
+- Expected: joiners cannot start the game.
+- Expected: the host can start the game and go first.
+
+### 10. End Game & Leaderboard
 - End the game after scoring points.
 - Enter a player name when prompted.
 - Expected: score is saved to localStorage.
 - Expected: leaderboard shows the saved score.
 
-### 9. Local Storage Persistence
+### 11. Local Storage Persistence
 - Reload the page and view the leaderboard.
 - Expected: saved scores persist across page refresh.
 
-### 10. Error Handling
+### 12. Error Handling
 - Temporarily remove or rename `json/kendrick_lyrics.json` or `json/travis_scott_lyrics.json` and reload.
 - Expected: the game logs an error but remains functional for other available data sources.
 
