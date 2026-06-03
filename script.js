@@ -151,6 +151,20 @@ Object.keys(albumCoverMap).forEach(id => {
     }
 });
 
+// Apply any cached covers from previous iTunes lookups (persisted in localStorage)
+gameData.albums.forEach(a => {
+    try {
+        const key = `lyricsAlbumCover:${a.id}`;
+        const cached = localStorage.getItem(key);
+        if (cached) {
+            a.cover = cached;
+            albumCoverMap[a.id] = cached;
+        }
+    } catch (e) {
+        // ignore localStorage errors
+    }
+});
+
 // Load songs from JSON files in the json folder
 async function loadSongsFromJSON() {
     try {
@@ -258,7 +272,140 @@ let currentPlayerIndex = 0;
 let multiplayerMode = false;
 let sharedRoomState = null;
 let localHostToken = localStorage.getItem("lyricsGuesserHostToken");
+let currentRoomStorageKey = null;
 let isHost = false;
+let socket = null;
+let localClientToken = sessionStorage.getItem('lyricsGuesserClientToken');
+let localPlayerIndex = null; // index in players[] for this client
+
+function ensureClientToken() {
+    if (!localClientToken) {
+        localClientToken = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        sessionStorage.setItem('lyricsGuesserClientToken', localClientToken);
+    }
+}
+
+function initSocket() {
+    try {
+        ensureClientToken();
+        
+        // Determine socket server URL
+        // Priority: query param > localStorage > detect localhost > current origin
+        const params = new URLSearchParams(window.location.search);
+        let socketServerUrl = params.get('socketServer') || localStorage.getItem('lyricsGuesserSocketServer');
+        
+        if (!socketServerUrl) {
+            // If running on localhost (including Live Server), connect to localhost:3000
+            // If running on an IP, try to infer socket server on same IP:3000
+            const hostname = window.location.hostname;
+            const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+            
+            if (isLocalhost) {
+                socketServerUrl = 'http://localhost:3000';
+                console.log('[Socket] Auto-detected localhost. Connecting to socket server on port 3000.');
+            } else {
+                // For IP-based access, assume socket server on same IP:3000
+                socketServerUrl = `http://${hostname}:3000`;
+                console.log('[Socket] Connecting to socket server at:', socketServerUrl);
+            }
+        }
+        
+        console.log('[Socket] Connecting to:', socketServerUrl);
+        socket = io(socketServerUrl, { reconnection: true, reconnectionDelay: 1000, reconnectionDelayMax: 5000, reconnectionAttempts: 5 });
+
+        socket.on('connect', () => {
+            console.log('[Socket] Connected successfully', socket.id);
+            // register client token and try to re-associate with any known room
+            socket.emit('register_client', { clientToken: localClientToken, hostToken: sharedRoomState ? sharedRoomState.hostToken : null });
+        });
+        
+        socket.on('connect_error', (err) => {
+            console.error('[Socket] Connection error:', err);
+            setRoomMessage('Socket connection failed. Make sure the server is running and accessible.', true);
+        });
+        
+        socket.on('disconnect', (reason) => {
+            console.warn('[Socket] Disconnected:', reason);
+        });
+
+        socket.on('room_state', (state) => {
+            console.log('[Socket] Received room_state:', state);
+            // Accept authoritative room state from server
+            sharedRoomState = state;
+            multiplayerMode = true;
+            players = (state.playerNames || []).map(name => ({ name, score: 0 }));
+            currentPlayerIndex = state.currentPlayerIndex || 0;
+            updateLobbyCount();
+            // determine if this client is host
+            isHost = (state.hostToken === state.hostToken && state.hostToken === state.hostToken) && (state.hostSocketId === socket.id || state.hostClientToken === localClientToken || localHostToken === state.hostToken);
+            // determine localPlayerIndex by token mapping (if provided)
+            if (Array.isArray(state.playerClientTokens)) {
+                localPlayerIndex = state.playerClientTokens.indexOf(localClientToken);
+            } else {
+                // fallback: match by name if provided in query UI
+                localPlayerIndex = players.findIndex(p => p.name === (state.myName || ''));
+            }
+
+            // Update selected artist from authoritative state
+            if (state.artistId) {
+                selectedArtistId = state.artistId;
+                if (gameData.artists.some(a => a.id === selectedArtistId)) {
+                    artistDropdown.value = selectedArtistId;
+                    updateAvatarImage(selectedArtistId);
+                }
+            }
+
+            if (localHostToken && state.hostToken === localHostToken) {
+                setHostLobbyMode();
+            } else if (localPlayerIndex >= 0) {
+                setJoinerLobbyMode(state);
+            } else {
+                // If not in players list, just show lobby with join controls
+                multiplayerToggle.checked = true;
+            }
+
+            if (state.isStarted) {
+                // start the game when server tells us to
+                startGame();
+            }
+        });
+
+        socket.on('game_started', (state) => {
+            console.log('[Socket] Game started:', state);
+            sharedRoomState = state;
+            multiplayerMode = true;
+            players = (state.playerNames || []).map(name => ({ name, score: 0 }));
+            currentPlayerIndex = state.currentPlayerIndex || 0;
+            updatePlayerDisplay();
+            startGame();
+        });
+
+        socket.on('turn_changed', (state) => {
+            console.log('[Socket] Turn changed:', state);
+            if (!state) return;
+            currentPlayerIndex = state.currentPlayerIndex || 0;
+            players = (state.playerNames || players.map(p=>p.name)).map(name => ({ name, score: 0 }));
+            updatePlayerDisplay();
+            setCurrentPoints(getCurrentPoints());
+            loadNewRound();
+        });
+
+        socket.on('lobby_updated', (state) => {
+            console.log('[Socket] Lobby updated:', state);
+            if (!state) return;
+            players = (state.playerNames || []).map(name => ({ name, score: 0 }));
+            updateLobbyCount();
+        });
+
+        socket.on('room_error', (msg) => {
+            console.error('[Socket] Room error:', msg);
+            setRoomMessage(msg, true);
+        });
+
+    } catch (e) {
+        console.error('[Socket] Initialization failed:', e);
+    }
+}
 
 const startScreen = document.getElementById("start-screen");
 const gameScreen = document.getElementById("game-screen");
@@ -310,6 +457,7 @@ copyRoomLinkBtn.onclick = copyRoomLink;
 joinRoomBtn.onclick = joinSharedRoom;
 
 window.onload = async () => {
+    initSocket();
     await loadSongsFromJSON();
     populateDropdown(gameData.artists);
     // Load artist-specific file for the initially selected artist, if available.
@@ -340,6 +488,11 @@ function onSearchChange() {
 
 async function onDropdownSelect() {
     updateAvatarImage(artistDropdown.value);
+    // If host in multiplayer, notify server about artist change
+    if (multiplayerMode && isHost && socket && socket.connected && sharedRoomState && sharedRoomState.hostToken) {
+        sharedRoomState.artistId = artistDropdown.value;
+        socket.emit('update_artist', { hostToken: sharedRoomState.hostToken, artistId: artistDropdown.value });
+    }
     // Attempt to load an artist-specific lyrics JSON (e.g., drake_lyrics.json)
     await loadSongsForArtist(artistDropdown.value);
 }
@@ -421,6 +574,10 @@ function setHostLobbyMode() {
     joinRoomBtn.classList.add("hidden");
     roomShareContainer.classList.remove("hidden");
     document.getElementById("start-multiplayer-button").classList.remove("hidden");
+    // Host can change artist and other start settings
+    artistDropdown.disabled = false;
+    const searchInput = document.getElementById("search-artist-input");
+    if (searchInput) searchInput.disabled = false;
 }
 
 function setJoinerLobbyMode(state) {
@@ -434,8 +591,103 @@ function setJoinerLobbyMode(state) {
     hostNote.classList.add("hidden");
     joinRoomInput.classList.add("hidden");
     joinRoomBtn.classList.add("hidden");
+    document.getElementById("start-multiplayer-button").classList.add("hidden");
     hostNameDisplay.textContent = state.hostName || "the room creator";
     setRoomMessage(`Waiting for ${state.hostName || "the host"} to start multiplayer. You cannot start the game.`, false);
+    // Joiners cannot change artist or other settings
+    artistDropdown.disabled = true;
+    const searchInput = document.getElementById("search-artist-input");
+    if (searchInput) searchInput.disabled = true;
+}
+
+function roomStorageKey(token) {
+    return `lyricsGuesserRoom:${token}`;
+}
+
+function saveRoomStateToStorage(state) {
+    if (!state || !state.hostToken) return;
+    currentRoomStorageKey = roomStorageKey(state.hostToken);
+    localStorage.setItem(currentRoomStorageKey, JSON.stringify(state));
+}
+
+function loadRoomStateFromStorage(token) {
+    if (!token) return null;
+    try {
+        const stored = localStorage.getItem(roomStorageKey(token));
+        return stored ? JSON.parse(stored) : null;
+    } catch (err) {
+        console.warn("Failed to load room state from storage", err);
+        return null;
+    }
+}
+
+function handleStorageEvent(event) {
+    console.debug("storage event", event.key, event.newValue && event.newValue.substring ? event.newValue.substring(0,200) : event.newValue);
+    if (!event.key || !event.newValue) return;
+    if (!currentRoomStorageKey || event.key !== currentRoomStorageKey) return;
+    try {
+        const updatedState = JSON.parse(event.newValue);
+        if (!updatedState || !sharedRoomState || updatedState.hostToken !== sharedRoomState.hostToken) return;
+        sharedRoomState = updatedState;
+        if (!isHost && updatedState.isStarted) {
+            // stop any polling fallback
+            stopJoinerPolling(updatedState.hostToken);
+            joinerWaitingPanel.classList.add("hidden");
+            setRoomMessage("Host started the game. Joining now...");
+            console.debug("handleStorageEvent: triggering startGame for joiner", updatedState.hostToken);
+            startGame();
+        }
+    } catch (err) {
+        console.warn("Unable to parse shared room state from storage event", err);
+    }
+}
+
+window.addEventListener("storage", handleStorageEvent);
+
+// Joiner polling fallbacks (used when storage events may be missed)
+const joinerPollers = {};
+
+function startJoinerPolling(hostToken) {
+    if (!hostToken) return;
+    stopJoinerPolling(hostToken);
+    const key = roomStorageKey(hostToken);
+    const start = Date.now();
+    const timeout = 5000; // ms
+    const intervalMs = 800;
+    const interval = setInterval(() => {
+        try {
+            const raw = localStorage.getItem(key);
+            if (raw) {
+                const s = JSON.parse(raw);
+                if (s && s.isStarted) {
+                    clearInterval(interval);
+                    delete joinerPollers[hostToken];
+                    console.debug("joiner polling: detected start", hostToken, s);
+                    joinerWaitingPanel.classList.add("hidden");
+                    setRoomMessage("Host started the game. Joining now...");
+                    startGame();
+                    return;
+                }
+            }
+        } catch (e) {
+            console.warn("joiner polling error", e);
+        }
+        if (Date.now() - start > timeout) {
+            clearInterval(interval);
+            delete joinerPollers[hostToken];
+            console.debug("joiner polling: timeout", hostToken);
+        }
+    }, intervalMs);
+    joinerPollers[hostToken] = interval;
+}
+
+function stopJoinerPolling(hostToken) {
+    if (!hostToken) return;
+    const t = joinerPollers[hostToken];
+    if (t) {
+        clearInterval(t);
+        delete joinerPollers[hostToken];
+    }
 }
 
 function encodeRoomState(state) {
@@ -483,6 +735,8 @@ function createSharedRoom() {
     };
 
     sharedRoomState = roomState;
+    saveRoomStateToStorage(roomState);
+    console.debug("createSharedRoom: room created", roomState, currentRoomStorageKey);
     const code = encodeRoomState(roomState);
     const baseUrl = getBaseUrl();
     roomLinkInput.value = `${baseUrl}?room=${encodeURIComponent(code)}`;
@@ -490,6 +744,17 @@ function createSharedRoom() {
     updateLobbyCount();
     setHostLobbyMode();
     setRoomMessage("Room created! Share this link with friends to join. You go first.");
+    // Inform server if socket connected
+    ensureClientToken();
+    if (socket && socket.connected) {
+        socket.emit('create_room', {
+            hostToken: roomState.hostToken,
+            artistId: roomState.artistId,
+            playerNames: roomState.playerNames,
+            playerClientTokens: [localClientToken, ...Array(roomState.playerNames.length-1).fill(null)],
+            hostClientToken: localClientToken
+        });
+    }
 }
 
 function copyRoomLink() {
@@ -518,7 +783,13 @@ function joinSharedRoom() {
 
     try {
         const roomState = decodeRoomState(code);
-        loadRoomState(roomState);
+        // Try to join via socket first if available
+        ensureClientToken();
+        if (socket && socket.connected) {
+            socket.emit('join_room', { hostToken: roomState.hostToken, clientToken: localClientToken, requestedName: getMultiplayerNames()[0] || '' });
+        } else {
+            loadRoomState(roomState);
+        }
     } catch (err) {
         console.error(err);
         setRoomMessage("Unable to read that room link. Please try again.", true);
@@ -549,22 +820,41 @@ function loadRoomState(state) {
         input.value = state.playerNames[index] || `Player ${index + 1}`;
     });
 
+    // If a persisted room state exists in storage, prefer that (keeps host updates)
+    if (state.hostToken) {
+        const persisted = loadRoomStateFromStorage(state.hostToken);
+        if (persisted) state = persisted;
+    }
+
     players = state.playerNames.map(name => ({ name, score: 0 }));
     currentPlayerIndex = state.currentPlayerIndex || 0;
     multiplayerMode = true;
     sharedRoomState = state;
+    if (state.hostToken) {
+        currentRoomStorageKey = roomStorageKey(state.hostToken);
+    }
 
     const code = encodeRoomState(state);
     const baseUrl = getBaseUrl();
     roomLinkInput.value = `${baseUrl}?room=${encodeURIComponent(code)}`;
+    window.history.replaceState(null, "", `${baseUrl}?room=${encodeURIComponent(code)}`);
     roomShareContainer.classList.remove("hidden");
+    // Persist any latest state for other tabs to pick up
+    saveRoomStateToStorage(state);
     updateLobbyCount();
 
     if (state.hostToken && localHostToken === state.hostToken) {
         setHostLobbyMode();
         setRoomMessage("Room loaded as host. You go first when you start multiplayer.");
+        if (state.isStarted) {
+            startGame();
+        }
     } else {
         setJoinerLobbyMode(state);
+        if (state.isStarted) {
+            joinerWaitingPanel.classList.add("hidden");
+            startGame();
+        }
     }
 }
 
@@ -613,10 +903,14 @@ function nextPlayerTurn() {
         return;
     }
 
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-    updatePlayerDisplay();
-    pointsDisplay.innerText = getCurrentPoints();
-    loadNewRound();
+    // In multiplayer, host is authoritative for advancing turns
+    if (isHost && socket && socket.connected && sharedRoomState && sharedRoomState.hostToken) {
+        socket.emit('next_turn', { hostToken: sharedRoomState.hostToken });
+        return;
+    }
+
+    // Non-hosts should not advance turns locally
+    console.warn('nextPlayerTurn: non-host attempted to advance turn');
 }
 
 async function startMultiplayerGame() {
@@ -633,14 +927,26 @@ async function startMultiplayerGame() {
     currentPlayerIndex = 0;
     multiplayerMode = true;
     if (sharedRoomState) {
+        // update shared state with any changes made by host (player names, artist)
+        sharedRoomState.playerNames = names;
+        sharedRoomState.artistId = selectedArtistId;
         sharedRoomState.isStarted = true;
         sharedRoomState.currentPlayerIndex = 0;
+        console.debug("startMultiplayerGame: host updating sharedRoomState and saving", sharedRoomState);
         const code = encodeRoomState(sharedRoomState);
         roomLinkInput.value = `${getBaseUrl()}?room=${encodeURIComponent(code)}`;
+        window.history.replaceState(null, "", roomLinkInput.value);
+        saveRoomStateToStorage(sharedRoomState);
+        console.debug("startMultiplayerGame: saved sharedRoomState to storage", currentRoomStorageKey);
     }
     updateLobbyCount();
     setRoomMessage("Multiplayer started. You go first.");
-    await startGame();
+    // notify server that game started
+    if (socket && socket.connected && sharedRoomState && sharedRoomState.hostToken) {
+        socket.emit('start_game', { hostToken: sharedRoomState.hostToken });
+    } else {
+        await startGame();
+    }
 }
 
 async function startGame() {
@@ -726,6 +1032,15 @@ function renderAlbumGrid(artistAlbums) {
                         let structuralArtworkUrl = data.results[0].artworkUrl100;
                         let highResArtworkUrl = structuralArtworkUrl.replace("100x100bb", "500x500bb");
                         targetImageElement.src = highResArtworkUrl;
+                        // persist discovered cover for future loads
+                        try {
+                            album.cover = highResArtworkUrl;
+                            albumCoverMap[album.id] = highResArtworkUrl;
+                            localStorage.setItem(`lyricsAlbumCover:${album.id}`, highResArtworkUrl);
+                            console.debug('iTunes cover fetched and cached for', album.id, highResArtworkUrl);
+                        } catch (e) {
+                            console.warn('Failed to cache album cover', e);
+                        }
                     }
                 })
                 .catch(err => {
@@ -746,6 +1061,14 @@ function shuffleArray(array) {
 function selectAlbum(albumId, albumName) {
     feedbackDisplay.classList.add("hidden");
     currentGuessAlbumId = albumId;
+
+    // Enforce turn-based input: only current player may select
+    if (multiplayerMode) {
+        if (localPlayerIndex === null || localPlayerIndex !== currentPlayerIndex) {
+            setRoomMessage("It's not your turn.", true);
+            return;
+        }
+    }
 
     guessAreaTitle.innerText = "STEP 2: GUESS THE SONG";
     albumGrid.classList.add("hidden");
@@ -831,6 +1154,13 @@ function selectAlbum(albumId, albumName) {
 }
 
 function submitGuess(guessedSongName) {
+    // Enforce turn-based input: only current player may submit
+    if (multiplayerMode) {
+        if (localPlayerIndex === null || localPlayerIndex !== currentPlayerIndex) {
+            setRoomMessage("It's not your turn.", true);
+            return;
+        }
+    }
     const isCorrect = (guessedSongName === currentRound.songName) && (currentGuessAlbumId === currentRound.albumId);
     if (isCorrect) {
         incrementCurrentPoints();

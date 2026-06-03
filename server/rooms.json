@@ -1,0 +1,38 @@
+{
+  "testroom_lmdb5r": {
+    "hostToken": "testroom_lmdb5r",
+    "hostSocketId": "qeLeyima-PNoqUn_AAAC",
+    "hostClientToken": "host_ugd8jo",
+    "playerNames": [
+      "Host",
+      "Joiner",
+      "Joiner"
+    ],
+    "playerClientTokens": [
+      "host_ugd8jo",
+      "joiner_sdnthy",
+      "joiner_sdnthy"
+    ],
+    "isStarted": true,
+    "currentPlayerIndex": 1,
+    "artistId": "kendrick",
+    "createdAt": 1780506800934
+  },
+  "kyoee5i1mpyc65ni": {
+    "hostToken": "kyoee5i1mpyc65ni",
+    "hostSocketId": "kjx6XNucQmUYrwt_AAAB",
+    "hostClientToken": "lumpknq0mpyc5tc6",
+    "playerNames": [
+      "Player 1",
+      "Player 2"
+    ],
+    "playerClientTokens": [
+      "lumpknq0mpyc5tc6",
+      null
+    ],
+    "isStarted": false,
+    "currentPlayerIndex": 0,
+    "artistId": "kendrick",
+    "createdAt": 1780507463195
+  }
+}
