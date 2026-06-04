@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- To this: -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self' http://127.0.0.1:3001 http://localhost:3001;">
+    <title>Lyrics Guesser 🎤</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="start-screen">
+            <h1>Lyrics Guesser 🎤</h1>
+            <div class="search-wrapper">
+                <input type="text" id="search-artist-input" placeholder="🔍 Search or filter artist..." oninput="onSearchChange()">
+            </div>
+            <div id="multiplayer-setup" class="multiplayer-setup">
+                <label class="multiplayer-toggle">
+                    <input type="checkbox" id="multiplayer-toggle" onchange="onMultiplayerToggle()">
+                    Play multiplayer
+                </label>
+                <div id="multiplayer-player-inputs" class="hidden">
+                    <input id="player-name-1" type="text" placeholder="Player 1" maxlength="20">
+                    <input id="player-name-2" type="text" placeholder="Player 2" maxlength="20">
+                    <button id="add-player-btn" class="secondary-btn" type="button">Add player</button>
+                    <p class="hint-text">You can add up to 4 players.</p>
+                </div>
+                <div id="room-controls" class="hidden room-controls">
+                    <button id="create-room-btn" class="secondary-btn" type="button">Create shared room</button>
+                    <div id="room-share" class="hidden room-share">
+                        <div class="room-share-field">
+                            <input id="room-link" type="text" readonly placeholder="Share this link" />
+                            <button id="copy-room-link" class="secondary-btn" type="button">Copy Link</button>
+                        </div>
+                    </div>
+                    <div id="room-stats" class="hidden" style="margin-top: 12px; color: #ccc;">
+                        <div>Players in lobby: <span id="lobby-count">0</span></div>
+                    </div>
+                    <div id="host-note" class="hidden host-note">You are the room creator. Click START MULTIPLAYER when ready. You will go first.</div>
+                    <div id="joiner-waiting" class="hidden waiting-panel">
+                        Waiting for <span id="host-name-display"></span> to start the game...
+                    </div>
+                    <div class="room-join-group">
+                        <input id="join-room-input" type="text" placeholder="Paste room link" />
+                        <button id="join-room-btn" class="secondary-btn" type="button">Join room</button>
+                    </div>
+                    <div id="room-message" class="room-message"></div>
+                </div>
+            </div>
+            <div class="artist-picker-container">
+                <div class="selected-artist-preview">
+                    <img id="artist-view-avatar" class="artist-img-frame" src="" alt="Artist Profile Avatar">
+                    <select id="artist-dropdown" onchange="onDropdownSelect()">
+                    </select>
+                </div>
+            </div>
+            <button id="start-button" class="primary-btn">START SOLO</button>
+            <button id="start-multiplayer-button" class="secondary-btn hidden">START MULTIPLAYER</button>
+            <br>
+            <button id="view-leaderboard-btn" class="secondary-btn">View Leaderboard</button>
+        </div>
+        <div id="game-screen" class="hidden">
+            <div id="game-header">
+                <button id="end-game-btn" class="secondary-btn">End Game & Save Score</button>
+                <div id="player-display" class="hidden">Current turn: <span id="current-player"></span></div>
+                <div id="points-display">Points: <span id="current-points">0</span></div>
+            </div>
+            <div id="lyric-display">"Loading lyrics..."</div>
+            <div id="guess-area">
+                <div id="guess-area-title">Step 1: Guess the Album</div>
+                <div id="selection-container">
+                    <div id="album-select-grid"></div>
+                    <div id="song-select-list" class="hidden">
+                        <h3>Songs on: <span id="selected-album-name" style="color: white;">Album Name</span></h3>
+                        <p style="color: #aaa; margin-bottom: 15px;">Step 2: Now pick the song!</p>
+                        <div id="song-options-container"></div>
+                        <button id="cancel-song-select" class="secondary-btn" style="margin-left:0; margin-top:15px;">← Choose a different album</button>
+                    </div>
+                </div>
+                <div id="feedback" class="hidden"></div>
+            </div>
+        </div>
+        <div id="leaderboard-screen" class="hidden">
+            <h1>Hall of Fame 🏆</h1>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player Name</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+            <div id="empty-leaderboard" class="hidden" style="color: #888; margin-top: 20px; font-style: italic;">No scores yet. Go play!</div>
+            <br>
+            <button id="back-to-start-btn" class="primary-btn">Back to Menu</button>
+            <button id="clear-leaderboard-btn" class="secondary-btn" style="background-color: #8b0000;">Reset Leaderboard</button>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
