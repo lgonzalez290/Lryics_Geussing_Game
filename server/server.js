@@ -3,7 +3,17 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 
+const cors = require('cors');
 const app = express();
+
+// Allow requests from your frontend Codespace URL
+app.use(cors({
+    origin: 'https://special-winner-694v6qgw6jjpf5j9-3001.app.github.dev',
+    credentials: true
+}));
+
+fetch('https://github.dev')
+
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
