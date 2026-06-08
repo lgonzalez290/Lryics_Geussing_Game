@@ -820,7 +820,7 @@ function loadRoomState(state) {
         input.value = state.playerNames[index] || `Player ${index + 1}`;
     });
 
-    // If a persisted room state exists in storage, prefer that (keeps host updates)
+    // If a persisted room state exists in , prefer that (keeps host updates)
     if (state.hostToken) {
         const persisted = loadRoomStateFromStorage(state.hostToken);
         if (persisted) state = persisted;

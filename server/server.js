@@ -1,18 +1,36 @@
 const express = require('express');
+const cors = require('cors'); // Ensure 'npm install cors' was executed
 const path = require('path');
-const http = require('http');
-const { Server } = require('socket.io');
-
-const cors = require('cors');
 const app = express();
 
-// Allow requests from your frontend Codespace URL
+// 1. Dynamic Port binding for GitHub Codespaces
+const PORT = process.env.PORT || 3000; 
+
+// 2. Clear CORS allowance for your active frontend port
 app.use(cors({
-    origin: 'https://special-winner-694v6qgw6jjpf5j9-3001.app.github.dev',
+    origin: [
+        'https://github.dev', // Frontend Codespace
+        'http://localhost:3000'
+    ],
     credentials: true
 }));
 
-fetch('https://github.dev')
+app.use(express.json());
+
+// 3. Prevent the root 404 error by mapping a baseline response
+app.get('/', (req, res) => {
+    res.json({ status: "success", message: "Lyrics Guessing Game API is live!" });
+});
+
+// Your existing game routes go here (e.g., app.use('/api', gameRoutes))
+
+app.listen(PORT, () => {
+    console.log(`Server is running smoothly on port ${PORT}`);
+});
+
+
+const http = require('http');
+const { Server } = require('socket.io');
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
@@ -20,7 +38,6 @@ const io = new Server(server, { cors: { origin: '*' } });
 // Serve the project root static files so website.html can be loaded
 app.use(express.static(path.join(__dirname, '..')));
 
-const PORT = process.env.PORT || 3000;
 
 // In-memory rooms store
 const rooms = {}; // hostToken -> { hostToken, hostSocketId, hostClientToken, playerNames:[], playerClientTokens:[], isStarted, currentPlayerIndex, artistId }

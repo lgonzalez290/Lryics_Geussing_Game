@@ -133,3 +133,6 @@ I can then pinpoint the issue and push a fix.
 - **Client**: Connects to server via WebSocket (socket.io), gets authoritative room state, start/turn events
 - **Room State**: Persisted to `server/rooms.json` for basic reconnection support
 - **Hosting**: For production, deploy the server to a cloud host (Heroku, AWS, etc.) so anyone can access it via URL
+
+
+

@@ -14,5 +14,9 @@
   },
   "devDependencies": {
     "cross-env": "^10.1.0"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
 }
