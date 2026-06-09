@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- To this: -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lyrics Guesser 🎤</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,7 +11,16 @@
         <div id="start-screen">
             <h1>Lyrics Guesser 🎤</h1>
             <div class="search-wrapper">
-                <input type="text" id="search-artist-input" placeholder="🔍 Search or filter artist..." oninput="onSearchChange()">
+                <label for="search-artist-input" style="display: block; margin-bottom: 8px; font-weight: 600; color: #ddd;">
+                    🔍 Search Artists
+                </label>
+                <input 
+                    type="text" 
+                    id="search-artist-input" 
+                    placeholder="Search or filter artist..." 
+                    oninput="onSearchChange()"
+                    aria-label="Search for an artist by name to filter the artist list"
+                >
             </div>
             <div id="multiplayer-setup" class="multiplayer-setup">
                 <label class="multiplayer-toggle">
@@ -19,8 +28,23 @@
                     Play multiplayer
                 </label>
                 <div id="multiplayer-player-inputs" class="hidden">
-                    <input id="player-name-1" type="text" placeholder="Player 1" maxlength="20">
-                    <input id="player-name-2" type="text" placeholder="Player 2" maxlength="20">
+                    <label for="player-name-1" style="display: block; margin-top: 12px; font-weight: 600; color: #ddd;">
+                        Player Names
+                    </label>
+                    <input 
+                        id="player-name-1" 
+                        type="text" 
+                        placeholder="Player 1" 
+                        maxlength="20"
+                        aria-label="Enter name for player 1"
+                    >
+                    <input 
+                        id="player-name-2" 
+                        type="text" 
+                        placeholder="Player 2" 
+                        maxlength="20"
+                        aria-label="Enter name for player 2"
+                    >
                     <button id="add-player-btn" class="secondary-btn" type="button">Add player</button>
                     <p class="hint-text">You can add up to 4 players.</p>
                 </div>
@@ -48,8 +72,21 @@
             </div>
             <div class="artist-picker-container">
                 <div class="selected-artist-preview">
-                    <img id="artist-view-avatar" class="artist-img-frame" src="" alt="Artist Profile Avatar">
-                    <select id="artist-dropdown" onchange="onDropdownSelect()">
+                    <img 
+                        id="artist-view-avatar" 
+                        class="artist-img-frame" 
+                        src="" 
+                        alt="Selected artist profile picture"
+                        aria-label="Current selected artist avatar"
+                    >
+                    <label for="artist-dropdown" style="display: block; margin-bottom: 8px; font-weight: 600; color: #ddd;">
+                        Select Artist
+                    </label>
+                    <select 
+                        id="artist-dropdown" 
+                        onchange="onDropdownSelect()"
+                        aria-label="Choose a rap artist to play with"
+                    >
                     </select>
                 </div>
             </div>
@@ -63,6 +100,22 @@
                 <button id="end-game-btn" class="secondary-btn">End Game & Save Score</button>
                 <div id="player-display" class="hidden">Current turn: <span id="current-player"></span></div>
                 <div id="points-display">Points: <span id="current-points">0</span></div>
+            </div>
+            <!-- LOADING STATE: Shows while fetching round data -->
+            <div id="loading-state" class="hidden state-banner">
+                <div class="spinner"></div>
+                <p>Loading next lyric...</p>
+            </div>
+            <!-- ERROR STATE: Shows when data loading fails -->
+            <div id="error-state" class="hidden state-banner error-banner">
+                <p>⚠️ Oops! We had trouble loading this round.</p>
+                <p style="font-size: 0.9rem; color: #bbb; margin-top: 8px;">The game will retry or skip to the next round.</p>
+                <button id="retry-round-btn" class="secondary-btn" style="margin-top: 12px;">Try Again</button>
+            </div>
+            <!-- EMPTY STATE: Shows when no data is available -->
+            <div id="empty-state" class="hidden state-banner empty-banner">
+                <p>📭 No lyrics loaded for this artist yet.</p>
+                <p style="font-size: 0.9rem; color: #bbb; margin-top: 8px;">Try selecting a different artist or check back later.</p>
             </div>
             <div id="lyric-display">"Loading lyrics..."</div>
             <div id="guess-area">

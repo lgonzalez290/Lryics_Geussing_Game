@@ -182,6 +182,8 @@ async function loadSongsFromJSON() {
         ];
         let csvData = null;
         let loadedFrom = null;
+        
+        // Attempt to fetch each candidate file until one succeeds
         for (const fname of candidates) {
             try {
                 const resp = await fetch(fname);
@@ -193,15 +195,21 @@ async function loadSongsFromJSON() {
                     break;
                 }
             } catch (e) {
-                // try next candidate
+                // Silently try the next candidate file
                 continue;
             }
         }
-        if (!csvData) throw new Error('No song JSON file found (tried: ' + candidates.join(', ') + ')');
-        console.log(`Loading songs from ${loadedFrom}`);
+        
+        // If no data was found, handle gracefully
+        if (!csvData) {
+            throw new Error('No song JSON file found (tried: ' + candidates.join(', ') + ')');
+        }
+        
+        // Process the loaded CSV/JSON data into game structure
         processCsvData(csvData);
     } catch (error) {
         console.error("Error loading songs from JSON:", error);
+        // Don't show error state here - let it happen when game starts
     }
 }
 
@@ -237,8 +245,6 @@ function processCsvData(csvData) {
             lyrics: entry.lyric
         };
     }).filter(song => song.albumId !== null);
-
-    console.log(`Loaded ${gameData.songs.length} songs`);
 }
 
 // Try to load an artist-specific JSON file from json folder
@@ -247,18 +253,14 @@ async function loadSongsForArtist(artistId) {
     const fname = artistJsonMap[artistId] || `${jsonDir}/${artistId}_lyrics.json`;
     try {
         const resp = await fetch(fname);
-        if (!resp.ok) {
-            console.log(`${fname} not found for artist ${artistId}`);
-            return;
-        }
+        if (!resp.ok) return;
         const data = await resp.json();
         if (data && Array.isArray(data) && data.length > 0) {
             processCsvData(data);
             currentSongsSourceArtist = artistId;
-            console.log(`Loaded artist-specific songs from ${fname}`);
         }
     } catch (e) {
-        console.log(`Failed to load ${fname}:`, e);
+        // Artist-specific file not found; use general song pool
     }
 }
 
@@ -302,20 +304,16 @@ function initSocket() {
             
             if (isLocalhost) {
                 socketServerUrl = 'http://localhost:3000';
-                console.log('[Socket] Auto-detected localhost. Connecting to socket server on port 3000.');
             } else {
                 // For IP-based access, assume socket server on same IP:3000
                 socketServerUrl = `http://${hostname}:3000`;
-                console.log('[Socket] Connecting to socket server at:', socketServerUrl);
             }
         }
         
-        console.log('[Socket] Connecting to:', socketServerUrl);
         socket = io(socketServerUrl, { reconnection: true, reconnectionDelay: 1000, reconnectionDelayMax: 5000, reconnectionAttempts: 5 });
 
         socket.on('connect', () => {
-            console.log('[Socket] Connected successfully', socket.id);
-            // register client token and try to re-associate with any known room
+            // Socket connection successful; register client token for server state sync
             socket.emit('register_client', { clientToken: localClientToken, hostToken: sharedRoomState ? sharedRoomState.hostToken : null });
         });
         
@@ -329,24 +327,22 @@ function initSocket() {
         });
 
         socket.on('room_state', (state) => {
-            console.log('[Socket] Received room_state:', state);
-            // Accept authoritative room state from server
+            // Server sent authoritative room state; sync local state
             sharedRoomState = state;
             multiplayerMode = true;
             players = (state.playerNames || []).map(name => ({ name, score: 0 }));
             currentPlayerIndex = state.currentPlayerIndex || 0;
             updateLobbyCount();
-            // determine if this client is host
+            // Determine if this client is the host (multiple checks for reliability)
             isHost = (state.hostToken === state.hostToken && state.hostToken === state.hostToken) && (state.hostSocketId === socket.id || state.hostClientToken === localClientToken || localHostToken === state.hostToken);
-            // determine localPlayerIndex by token mapping (if provided)
+            // Map this client to its player index by token
             if (Array.isArray(state.playerClientTokens)) {
                 localPlayerIndex = state.playerClientTokens.indexOf(localClientToken);
             } else {
-                // fallback: match by name if provided in query UI
                 localPlayerIndex = players.findIndex(p => p.name === (state.myName || ''));
             }
 
-            // Update selected artist from authoritative state
+            // Update selected artist from server state
             if (state.artistId) {
                 selectedArtistId = state.artistId;
                 if (gameData.artists.some(a => a.id === selectedArtistId)) {
@@ -360,18 +356,16 @@ function initSocket() {
             } else if (localPlayerIndex >= 0) {
                 setJoinerLobbyMode(state);
             } else {
-                // If not in players list, just show lobby with join controls
                 multiplayerToggle.checked = true;
             }
 
             if (state.isStarted) {
-                // start the game when server tells us to
                 startGame();
             }
         });
 
         socket.on('game_started', (state) => {
-            console.log('[Socket] Game started:', state);
+            // Server notified that game has started
             sharedRoomState = state;
             multiplayerMode = true;
             players = (state.playerNames || []).map(name => ({ name, score: 0 }));
@@ -381,7 +375,7 @@ function initSocket() {
         });
 
         socket.on('turn_changed', (state) => {
-            console.log('[Socket] Turn changed:', state);
+            // Current player's turn has ended; server advancing to next player
             if (!state) return;
             currentPlayerIndex = state.currentPlayerIndex || 0;
             players = (state.playerNames || players.map(p=>p.name)).map(name => ({ name, score: 0 }));
@@ -391,7 +385,7 @@ function initSocket() {
         });
 
         socket.on('lobby_updated', (state) => {
-            console.log('[Socket] Lobby updated:', state);
+            // Player joined or left the lobby; update player count display
             if (!state) return;
             players = (state.playerNames || []).map(name => ({ name, score: 0 }));
             updateLobbyCount();
@@ -405,6 +399,70 @@ function initSocket() {
     } catch (e) {
         console.error('[Socket] Initialization failed:', e);
     }
+}
+
+/**
+ * STATE MANAGEMENT: Loading, Error, and Empty States
+ * These functions manage UI feedback during critical game operations
+ */
+function showLoadingState() {
+    const loadingEl = document.getElementById("loading-state");
+    const errorEl = document.getElementById("error-state");
+    const emptyEl = document.getElementById("empty-state");
+    const lyricEl = document.getElementById("lyric-display");
+    const guessEl = document.getElementById("guess-area");
+    
+    if (loadingEl) loadingEl.classList.remove("hidden");
+    if (errorEl) errorEl.classList.add("hidden");
+    if (emptyEl) emptyEl.classList.add("hidden");
+    if (lyricEl) lyricEl.classList.add("hidden");
+    if (guessEl) guessEl.classList.add("hidden");
+}
+
+function showErrorState(message = "Failed to load the next round.") {
+    const loadingEl = document.getElementById("loading-state");
+    const errorEl = document.getElementById("error-state");
+    const emptyEl = document.getElementById("empty-state");
+    const lyricEl = document.getElementById("lyric-display");
+    const guessEl = document.getElementById("guess-area");
+    
+    if (loadingEl) loadingEl.classList.add("hidden");
+    if (errorEl) {
+        errorEl.classList.remove("hidden");
+        const msgEl = errorEl.querySelector("p:first-child");
+        if (msgEl) msgEl.textContent = "⚠️ " + message;
+    }
+    if (emptyEl) emptyEl.classList.add("hidden");
+    if (lyricEl) lyricEl.classList.add("hidden");
+    if (guessEl) guessEl.classList.add("hidden");
+}
+
+function showEmptyState(message = "No lyrics available for this artist.") {
+    const loadingEl = document.getElementById("loading-state");
+    const errorEl = document.getElementById("error-state");
+    const emptyEl = document.getElementById("empty-state");
+    const lyricEl = document.getElementById("lyric-display");
+    const guessEl = document.getElementById("guess-area");
+    
+    if (loadingEl) loadingEl.classList.add("hidden");
+    if (errorEl) errorEl.classList.add("hidden");
+    if (emptyEl) {
+        emptyEl.classList.remove("hidden");
+        const msgEl = emptyEl.querySelector("p:first-child");
+        if (msgEl) msgEl.textContent = "📭 " + message;
+    }
+    if (lyricEl) lyricEl.classList.add("hidden");
+    if (guessEl) guessEl.classList.add("hidden");
+}
+
+function hideStateOverlays() {
+    const loadingEl = document.getElementById("loading-state");
+    const errorEl = document.getElementById("error-state");
+    const emptyEl = document.getElementById("empty-state");
+    
+    if (loadingEl) loadingEl.classList.add("hidden");
+    if (errorEl) errorEl.classList.add("hidden");
+    if (emptyEl) emptyEl.classList.add("hidden");
 }
 
 const startScreen = document.getElementById("start-screen");
@@ -451,6 +509,7 @@ document.getElementById("back-to-start-btn").onclick = () => {
 document.getElementById("clear-leaderboard-btn").onclick = clearLeaderboard;
 document.getElementById("cancel-song-select").onclick = resetGuessArea;
 document.getElementById("start-multiplayer-button").onclick = startMultiplayerGame;
+document.getElementById("retry-round-btn").onclick = loadNewRound;
 addPlayerBtn.onclick = addMultiplayerPlayerInput;
 createRoomBtn.onclick = createSharedRoom;
 copyRoomLinkBtn.onclick = copyRoomLink;
@@ -622,7 +681,6 @@ function loadRoomStateFromStorage(token) {
 }
 
 function handleStorageEvent(event) {
-    console.debug("storage event", event.key, event.newValue && event.newValue.substring ? event.newValue.substring(0,200) : event.newValue);
     if (!event.key || !event.newValue) return;
     if (!currentRoomStorageKey || event.key !== currentRoomStorageKey) return;
     try {
@@ -634,7 +692,6 @@ function handleStorageEvent(event) {
             stopJoinerPolling(updatedState.hostToken);
             joinerWaitingPanel.classList.add("hidden");
             setRoomMessage("Host started the game. Joining now...");
-            console.debug("handleStorageEvent: triggering startGame for joiner", updatedState.hostToken);
             startGame();
         }
     } catch (err) {
@@ -662,7 +719,6 @@ function startJoinerPolling(hostToken) {
                 if (s && s.isStarted) {
                     clearInterval(interval);
                     delete joinerPollers[hostToken];
-                    console.debug("joiner polling: detected start", hostToken, s);
                     joinerWaitingPanel.classList.add("hidden");
                     setRoomMessage("Host started the game. Joining now...");
                     startGame();
@@ -675,7 +731,6 @@ function startJoinerPolling(hostToken) {
         if (Date.now() - start > timeout) {
             clearInterval(interval);
             delete joinerPollers[hostToken];
-            console.debug("joiner polling: timeout", hostToken);
         }
     }, intervalMs);
     joinerPollers[hostToken] = interval;
@@ -736,7 +791,6 @@ function createSharedRoom() {
 
     sharedRoomState = roomState;
     saveRoomStateToStorage(roomState);
-    console.debug("createSharedRoom: room created", roomState, currentRoomStorageKey);
     const code = encodeRoomState(roomState);
     const baseUrl = getBaseUrl();
     roomLinkInput.value = `${baseUrl}?room=${encodeURIComponent(code)}`;
@@ -932,12 +986,10 @@ async function startMultiplayerGame() {
         sharedRoomState.artistId = selectedArtistId;
         sharedRoomState.isStarted = true;
         sharedRoomState.currentPlayerIndex = 0;
-        console.debug("startMultiplayerGame: host updating sharedRoomState and saving", sharedRoomState);
         const code = encodeRoomState(sharedRoomState);
         roomLinkInput.value = `${getBaseUrl()}?room=${encodeURIComponent(code)}`;
         window.history.replaceState(null, "", roomLinkInput.value);
         saveRoomStateToStorage(sharedRoomState);
-        console.debug("startMultiplayerGame: saved sharedRoomState to storage", currentRoomStorageKey);
     }
     updateLobbyCount();
     setRoomMessage("Multiplayer started. You go first.");
@@ -970,21 +1022,39 @@ async function startGame() {
 }
 
 function loadNewRound() {
+    // Show loading state while preparing the next round
+    showLoadingState();
     feedbackDisplay.classList.add("hidden");
     currentGuessAlbumId = "";
     resetGuessArea();
 
-    const artistAlbums = gameData.albums.filter(a => a.artist === selectedArtistId);
-    const artistAlbumIds = artistAlbums.map(a => a.id);
-    const artistSongs = gameData.songs.filter(s => artistAlbumIds.includes(s.albumId));
+    try {
+        const artistAlbums = gameData.albums.filter(a => a.artist === selectedArtistId);
+        const artistAlbumIds = artistAlbums.map(a => a.id);
+        const artistSongs = gameData.songs.filter(s => artistAlbumIds.includes(s.albumId));
 
-    const randomSong = artistSongs[Math.floor(Math.random() * artistSongs.length)];
-    currentRound.albumId = randomSong.albumId;
-    currentRound.songName = randomSong.name;
-    currentRound.lyrics = randomSong.lyrics;
+        // Check for empty data state (no songs available for artist)
+        if (!artistSongs || artistSongs.length === 0) {
+            showEmptyState(`No lyrics available for ${gameData.artists.find(a => a.id === selectedArtistId)?.name || "this artist"}.`);
+            return;
+        }
 
-    lyricDisplay.innerText = `"${currentRound.lyrics}"`;
-    renderAlbumGrid(artistAlbums);
+        // Randomly select a song for this round
+        const randomSong = artistSongs[Math.floor(Math.random() * artistSongs.length)];
+        currentRound.albumId = randomSong.albumId;
+        currentRound.songName = randomSong.name;
+        currentRound.lyrics = randomSong.lyrics;
+
+        // Display the lyric snippet and render album selection grid
+        hideStateOverlays();
+        lyricDisplay.innerText = `"${currentRound.lyrics}"`;
+        lyricDisplay.classList.remove("hidden");
+        document.getElementById("guess-area").classList.remove("hidden");
+        renderAlbumGrid(artistAlbums);
+    } catch (error) {
+        console.error("Error loading new round:", error);
+        showErrorState("Failed to load the next round. Please try again.");
+    }
 }
 
 function resetGuessArea() {
@@ -1024,28 +1094,34 @@ function renderAlbumGrid(artistAlbums) {
             const artistName = artistObj ? artistObj.name : "";
             const apiQueryTerm = encodeURIComponent(`${artistName} ${album.name}`);
 
-            fetch(`https://itunes.apple.com/search?term=${apiQueryTerm}&entity=album&limit=1`)
-                .then(response => response.json())
-                .then(data => {
-                    const targetImageElement = document.getElementById(`cover-img-${album.id}`);
-                    if (targetImageElement && data.results && data.results.length > 0) {
-                        let structuralArtworkUrl = data.results[0].artworkUrl100;
-                        let highResArtworkUrl = structuralArtworkUrl.replace("100x100bb", "500x500bb");
-                        targetImageElement.src = highResArtworkUrl;
-                        // persist discovered cover for future loads
-                        try {
-                            album.cover = highResArtworkUrl;
-                            albumCoverMap[album.id] = highResArtworkUrl;
-                            localStorage.setItem(`lyricsAlbumCover:${album.id}`, highResArtworkUrl);
-                            console.debug('iTunes cover fetched and cached for', album.id, highResArtworkUrl);
-                        } catch (e) {
-                            console.warn('Failed to cache album cover', e);
+            // Attempt to fetch high-res album cover from iTunes API (non-critical, has fallback)
+            try {
+                fetch(`https://itunes.apple.com/search?term=${apiQueryTerm}&entity=album&limit=1`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const targetImageElement = document.getElementById(`cover-img-${album.id}`);
+                        if (targetImageElement && data.results && data.results.length > 0) {
+                            let structuralArtworkUrl = data.results[0].artworkUrl100;
+                            let highResArtworkUrl = structuralArtworkUrl.replace("100x100bb", "500x500bb");
+                            targetImageElement.src = highResArtworkUrl;
+                            // Cache discovered cover for future loads (uses try/catch in localStorage wrapper)
+                            try {
+                                album.cover = highResArtworkUrl;
+                                albumCoverMap[album.id] = highResArtworkUrl;
+                                localStorage.setItem(`lyricsAlbumCover:${album.id}`, highResArtworkUrl);
+                            } catch (e) {
+                                // localStorage may fail in some browsers; silently ignore
+                            }
                         }
-                    }
-                })
-                .catch(err => {
-                    console.error("iTunes cover fetching failed for album: " + album.name, err);
-                });
+                    })
+                    .catch(err => {
+                        // iTunes fetch failed, but placeholder image is already showing
+                        console.warn("iTunes cover fetch failed for album: " + album.name);
+                    });
+            } catch (e) {
+                // Outer try/catch for fetch initialization
+                console.warn("Error initiating iTunes cover fetch:", e);
+            }
         }
     });
 }
@@ -1164,12 +1240,15 @@ function submitGuess(guessedSongName) {
     const isCorrect = (guessedSongName === currentRound.songName) && (currentGuessAlbumId === currentRound.albumId);
     if (isCorrect) {
         incrementCurrentPoints();
-        showFeedback(true, "Correct! Great job!");
+        // Accessibility: Explicit text + emoji + color (not color alone)
+        showFeedback(true, "Correct! Great job! +1 point");
         setTimeout(() => {
             if (multiplayerMode) nextPlayerTurn(); else loadNewRound();
         }, 1500);
     } else {
-        showFeedback(false, `Incorrect! The answer was "${currentRound.songName}" on ${gameData.albums.find(a => a.id === currentRound.albumId).name}.`);
+        const albumName = gameData.albums.find(a => a.id === currentRound.albumId).name;
+        // Accessibility: Explicit text explanation of what was wrong
+        showFeedback(false, `Incorrect. The correct answer was: "${currentRound.songName}" from ${albumName}. No points awarded.`);
         setTimeout(() => {
             if (multiplayerMode) nextPlayerTurn(); else loadNewRound();
         }, 3000);
